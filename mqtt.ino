@@ -2,9 +2,23 @@
 #include <ezTime.h>
 #include <PubSubClient.h>
 
-const char* ssid     = "CE-Hub-Student";
-const char* password = "";
-const char* host = "iot.io";
+// Wifi and MQTT
+#include "arduino_secrets.h" 
+
+const char* ssid     = SECRET_SSID;
+const char* password = SECRET_PASS;
+const char* mqttuser = SECRET_MQTTUSER;
+const char* mqttpass = SECRET_MQTTPASS;
+
+
+const char* mqtt_server = "mqtt.cetools.org";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+long lastMsg = 0;
+char msg[50];
+int value = 0;
+
 
 Timezone GB;
 
@@ -34,42 +48,76 @@ while (WiFi.status() != WL_CONNECTED) {
 
   GB.setLocation("Europe/London");
   Serial.println("London time: " + GB.dateTime());  
+
+  pinMode(BUILTIN_LED, OUTPUT);     
+  digitalWrite(BUILTIN_LED, HIGH);  
+
+  client.setServer(mqtt_server, 1884);
+  client.setCallback(callback); 
 }
 
 
 void loop() {
   delay(5000);
 
-  Serial.println("-------------------------------");
-  Serial.print("Connecting to ");
-  Serial.println(host);
-
-  // Use WiFiClient class to create TCP connections
-  WiFiClient client;
-  const int httpPort = 80;
-  if (!client.connect(host, httpPort)) {
-    Serial.println("connection failed");
-    return;
-  }
-
-   // We now create a URI for the request
-  String url = "/data/index.html";
-  Serial.print("Requesting URL: ");
-  Serial.println(host + url);
-
-  // This will send the request to the server
-  client.print(String("GET ") + url + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" +
-               "Connection: close\r\n\r\n");
-
-  delay(500);
-
-    // Read all the lines of the reply from server and print them to Serial
-  while(client.available()){
-    String line = client.readStringUntil('\r');
-    Serial.print(line);
-  }
+  Serial.println("----------------- Sending MQTT --------------");
+  sendMQTT();
+  
   Serial.println(GB.dateTime("H:i:s")); 
   Serial.println();
-  Serial.println("closing connection");
+}
+
+void sendMQTT() {
+
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
+  ++value;
+  snprintf (msg, 50, "hello world from Yaman! #%ld", value);
+  Serial.print("Publish message: ");
+  Serial.println(msg);
+  client.publish("student/CASA0014/plant/ucfnmyr", msg);
+}
+
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {    // while not (!) connected....
+    Serial.print("Attempting MQTT connection...");
+    // Create a random client ID
+    String clientId = "ESP8266Client-";
+    clientId += String(random(0xffff), HEX);
+    
+    // Attempt to connect
+    if (client.connect(clientId.c_str(), mqttuser, mqttpass)) {
+      Serial.println("connected");
+      // ... and subscribe to messages on broker
+      client.subscribe("student/CASA0014/plant/ucfnmyr/casandy");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+
+  // Switch on the LED if an 1 was received as first character
+  if ((char)payload[0] == '1') {
+    digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
+    // but actually the LED is on; this is because it is active low on the ESP-01)
+  } else {
+    digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
+  }
+
 }
