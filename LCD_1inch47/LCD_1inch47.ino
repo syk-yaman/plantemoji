@@ -30,8 +30,10 @@ void setup()
  //Paint_DrawCircle(165,125,  25,        YELLOW  ,DOT_PIXEL_2X2,DRAW_FILL_EMPTY);
  //Paint_DrawCircle(195,125,  25,        GREEN   ,DOT_PIXEL_2X2,DRAW_FILL_EMPTY);
  
- Paint_DrawImage(gImage_happy, 5, 5, 130, 130); 
+ Paint_DrawImage(gImage_happy, 36, 36, 100, 100); 
 
+ Paint_DrawImage(gImage_sad, 150, 36, 100, 100); 
+ 
 }
 void loop()
 {
