@@ -90,6 +90,7 @@ typedef enum {
 #define GREEN         0x07E0
 #define CYAN          0x7FFF
 #define YELLOW        0xFFE0
+#define NEWYELLOW     0xFDE0
 #define BROWN         0XBC40 
 #define BRRED         0XFC07 
 #define GRAY          0X8430 
