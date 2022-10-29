@@ -666,6 +666,7 @@ void Paint_DrawImage(const unsigned char *image, UWORD xStart, UWORD yStart, UWO
   int i, j;
   for (j = 0; j < H_Image; j++) {
     for (i = 0; i < W_Image; i++) {
+      yield();
       if (xStart + i < LCD_WIDTH  &&  yStart + j < LCD_HEIGHT) //Exceeded part does not display
         Paint_SetPixel(xStart + i, yStart + j, (pgm_read_byte(image + j * W_Image * 2 + i * 2 + 1)) << 8 | (pgm_read_byte(image + j * W_Image * 2 + i * 2)));
       //Using arrays is a property of sequential storage, accessing the original array by algorithm
