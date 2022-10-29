@@ -28,7 +28,7 @@ void setup() {
  //Paint_DrawCircle(165,125,  25,        YELLOW  ,DOT_PIXEL_2X2,DRAW_FILL_EMPTY);
  //Paint_DrawCircle(195,125,  25,        GREEN   ,DOT_PIXEL_2X2,DRAW_FILL_EMPTY);
  //Paint_DrawImage(gImage_sad, 36, 30, 115, 112);
- Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
+ 
  Serial.println("Hi");
 
  
@@ -37,8 +37,12 @@ void setup() {
 
 void loop() {
   //Paint_DrawRectangle(125, 10, 225, 58, RED     ,DOT_PIXEL_2X2,DRAW_FILL_EMPTY);
-  
+  delay(1000);
+  Paint_Clear(BLACK);
+  Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
   
   Serial.println("Hi");
   delay(1000);
+  Paint_Clear(BLACK);
+  Paint_DrawImage(gImage_sad, 5, 10, 165, 160); 
 }
