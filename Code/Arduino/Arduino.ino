@@ -24,18 +24,15 @@ void setup()
 void loop()
 {
     float soilMoistureValue = analogRead(moisturePin);
-    float ldrValue = analogRead(ldrPin);
+    float ldrValue = -1; //Cancelled for now
     float humidityValue = dht.readHumidity();
     float temperatureValue= dht.readTemperature();
-
-  
-    // read the value from the sensor:
-    int moisture_val = analogRead(nailsMoisturePin);   // read the resistance      
+    int nailsMoistureValue = analogRead(nailsMoisturePin);   // read the resistance      
   
     //float nailSoilMoistureValue = analogRead(nailsMoisturePin);
 
     String sensorData = String(soilMoistureValue) + ";" + String(temperatureValue) + ";" +
-                        String(humidityValue) + ";" + String(ldrValue) + ";" + String(moisture_val);
+                        String(humidityValue) + ";" + String(ldrValue) + ";" + String(nailsMoistureValue);
                         
     Serial.println(sensorData);
     delay(1000);
