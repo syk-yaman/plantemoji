@@ -1,4 +1,4 @@
-#include "image.h"
+#include "LCD_Images.h"
 
 const unsigned char gImage_sad[52800] = { /* 0X01,0X10,0XA0,0X00,0XA5,0X00,0X01,0X1B, */
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,

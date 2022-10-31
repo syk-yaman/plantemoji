@@ -36,7 +36,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "fonts.h"
+#include "LCD_Fonts.h"
 
 const uint8_t Font24_Table [] PROGMEM = 
 {

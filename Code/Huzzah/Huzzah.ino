@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include "LCD_Driver.h"
-#include "GUI_Paint.h"
-#include "image.h"
+#include "LCD_GUI_Paint.h"
+#include "LCD_Images.h"
 
 void setup() {
 

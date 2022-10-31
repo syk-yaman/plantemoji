@@ -36,7 +36,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "fonts.h"
+#include "LCD_Fonts.h"
 
 // Character bitmaps for Courier New 15pt
 const uint8_t Font20_Table[] PROGMEM = 

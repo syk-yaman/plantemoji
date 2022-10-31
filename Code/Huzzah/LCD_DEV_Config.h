@@ -29,27 +29,52 @@
 # THE SOFTWARE.
 #
 ******************************************************************************/
-#include "DEV_Config.h"
+#ifndef _DEV_CONFIG_H_
+#define _DEV_CONFIG_H_
 
-void GPIO_Init()
-{
-  pinMode(DEV_CS_PIN, OUTPUT);
-  pinMode(DEV_RST_PIN, OUTPUT);
-  pinMode(DEV_DC_PIN, OUTPUT);
-  pinMode(DEV_BL_PIN, OUTPUT);
-  analogWrite(DEV_BL_PIN,140);
- }
- void Config_Init()
- {
+#include <stdint.h>
+#include <stdio.h>
+#include <SPI.h>
+#include "LCD_Debug.h"
+#include <avr/pgmspace.h>
 
-  GPIO_Init();
-  
-  //Serial
-  Serial.begin(115200);
-  
-  //spi
-  SPI.setDataMode(SPI_MODE3);
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setClockDivider(SPI_CLOCK_DIV2);
-  SPI.begin();
-  }
+
+
+#define UBYTE   uint8_t
+#define UWORD   uint16_t
+#define UDOUBLE uint32_t
+
+/**
+ * GPIO config
+**/
+#define DEV_CS_PIN  0
+#define DEV_DC_PIN  2
+#define DEV_RST_PIN 15
+#define DEV_BL_PIN  16
+
+
+/**
+ * GPIO read and write
+**/
+#define DEV_Digital_Write(_pin, _value) digitalWrite(_pin, _value == 0? LOW:HIGH)
+#define DEV_Digital_Read(_pin) digitalRead(_pin)
+
+
+/**
+ * SPI
+**/
+#define DEV_SPI_WRITE(_dat)   SPI.transfer(_dat)
+
+/**
+ * delay x ms
+**/
+#define DEV_Delay_ms(__xms)    delay(__xms)
+
+/**
+ * PWM_BL
+**/
+ #define  DEV_Set_BL(_Pin, _Value)  analogWrite(_Pin, _Value)
+
+/*-----------------------------------------------------------------------------*/
+ void Config_Init();
+#endif

@@ -34,10 +34,10 @@
 #ifndef __GUI_PAINT_H
 #define __GUI_PAINT_H
 
-#include "DEV_Config.h"
+#include "LCD_DEV_Config.h"
 #include "LCD_Driver.h"
-#include "fonts.h"
-#include "Debug.h"
+#include "LCD_Fonts.h"
+#include "LCD_Debug.h"
 #include <avr/pgmspace.h>
 /**
  * Image attributes
