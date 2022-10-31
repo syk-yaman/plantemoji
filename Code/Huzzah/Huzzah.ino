@@ -31,20 +31,23 @@ void setup() {
  
  Serial.println("Hi");
 
- 
+ Serial.println("Drawing happy face");
+
+  delay(500);
+  Paint_Clear(BLACK);
+  Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
+  
+  Serial.println("Drawing sad face");
+
+  delay(500);
+  Paint_Clear(BLACK);
+  Paint_DrawImage(gImage_sad, 5, 5, 165, 160); 
 }
 
 
 void loop() {
   //Paint_DrawRectangle(125, 10, 225, 58, RED     ,DOT_PIXEL_2X2,DRAW_FILL_EMPTY);
-  delay(1000);
-  Paint_Clear(BLACK);
-  Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
   
-  Serial.println("Hi");
-  delay(1000);
-  Paint_Clear(BLACK);
-  Paint_DrawImage(gImage_sad, 5, 10, 165, 160); 
 
 // https://stackoverflow.com/questions/9072320/split-string-into-string-array
 String splitString(String data, char separator, int index)
