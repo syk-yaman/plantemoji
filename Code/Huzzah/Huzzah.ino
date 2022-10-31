@@ -90,14 +90,16 @@ void loop() {
       String temperatureReading = splitString(sensorDataReceived,';',1);
       String humidityReading = splitString(sensorDataReceived,';',2);
       String lightReading = splitString(sensorDataReceived,';',3);
+      String nailSoilMoistureReading = splitString(sensorDataReceived,';',4);
 
       Serial.println("------ Arduino said: -------");
       Serial.println("soilMoistureReading: " + soilMoistureReading);
       Serial.println("temperatureReading: " + temperatureReading);
       Serial.println("humidityReading: " + humidityReading);
       Serial.println("lightReading: " + lightReading);
+      Serial.println("nailSoilMoistureReading: " + nailSoilMoistureReading);
       
-      sendMQTT(soilMoistureReading, temperatureReading, humidityReading, lightReading);
+      sendMQTT(soilMoistureReading, temperatureReading, humidityReading, lightReading, nailSoilMoistureReading);
 
     }
   
@@ -123,7 +125,8 @@ String splitString(String data, char separator, int index)
 }
 
 
-void sendMQTT(String soilMoistureReading, String temperatureReading, String humidityReading, String lightReading ) {
+void sendMQTT(String soilMoistureReading, String temperatureReading,
+              String humidityReading, String lightReading, String nailSoilMoistureReading) {
 
   if (!client.connected()) {
     reconnect();
@@ -142,6 +145,10 @@ void sendMQTT(String soilMoistureReading, String temperatureReading, String humi
   lightReading.toCharArray(msg,lightReading.length());
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/light", msg);
 
+  
+  nailSoilMoistureReading.toCharArray(msg,nailSoilMoistureReading.length());
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/nailSoilMoisture", msg);
+  
   String happy = "happy!";
   happy.toCharArray(msg, happy.length());
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/mood", msg);
