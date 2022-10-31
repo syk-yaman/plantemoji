@@ -1,8 +1,3 @@
-extern "C" {
-  #include "user_interface.h"
-  #include "wpa2_enterprise.h"
-}
-
 //LCD imports
 #include <SPI.h>
 #include "LCD_Driver.h"
@@ -18,14 +13,9 @@ extern "C" {
 #include <ezTime.h>
 
 const char* ssid     = SECRET_SSID;
-const char* username  = SECRET_USERNAME;
 const char* password = SECRET_PASS;
 const char* mqttuser = SECRET_MQTTUSER;
-const char* mqttpass = SECRET_MQTTPASS;
-struct station_config stationConf;
-
-   
-   
+const char* mqttpass = SECRET_MQTTPASS;   
 
 const char* mqtt_server = "mqtt.cetools.org";
 
@@ -43,33 +33,17 @@ void setup() {
   LCD_SetBacklight(100);
   Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 90, BLACK);
   Paint_Clear(BLACK);
- 
-  Serial.println("Hi");
-  stationConf.bssid_set = 0;
-
-  os_memcpy(&stationConf.ssid,ssid,32);
-  os_memcpy(&stationConf.password,password,64);
-  wifi_station_set_config(&stationConf);
-
-   // Flushing stored configuration from FLASH
-  wifi_station_clear_cert_key();
-  wifi_station_clear_enterprise_ca_cert();
-  wifi_station_clear_enterprise_identity();
-  wifi_station_clear_enterprise_username();
-  wifi_station_clear_enterprise_password();
-  wifi_station_clear_enterprise_new_password();
-
   
-  wifi_station_set_wpa2_enterprise_auth(1);
-  wifi_station_set_enterprise_identity((uint8*)username, strlen(username));
-  wifi_station_set_enterprise_username((uint8*)username, strlen(username));
-  wifi_station_set_enterprise_password((uint8*)password, strlen(password));
+  Serial.println("Hi");
+  Serial.println("Drawing happy face");
+
+  delay(500);
+  Paint_Clear(BLACK);
+  Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
   
   Serial.print("Connecting to ");
   Serial.println(SECRET_SSID);
-  // Starting association with AP
-  wifi_station_connect();
-  
+
   WiFi.begin(SECRET_SSID, SECRET_PASS);
   
   while (WiFi.status() != WL_CONNECTED) {
@@ -93,11 +67,6 @@ void setup() {
   client.setCallback(callback); 
   
   
-  Serial.println("Drawing happy face");
-
-  delay(500);
-  Paint_Clear(BLACK);
-  Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
   
   Serial.println("Drawing sad face");
 
