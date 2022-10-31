@@ -36,9 +36,10 @@ void setup()
 }
 void loop()
 {
-    float sensorValue = analogRead(moisturePin);
-    Serial.println(sensorValue);
-    Paint_DrawFloatNum (260, 58 ,sensorValue,3, &Font20,  WHITE,  BLACK);
+    float soilMoistureValue = analogRead(moisturePin);
+    String sensorData = String(soilMoistureValue) + ";" + String(soilMoistureValue) + ";" + String(1.0) + ";" + String(soilMoistureValue);
+    Serial.println(sensorData);
+    //Paint_DrawFloatNum (260, 58 ,sensorValue,3, &Font20,  WHITE,  BLACK);
     delay(1000);
 }
 

@@ -48,6 +48,24 @@ void setup() {
 void loop() {
   //Paint_DrawRectangle(125, 10, 225, 58, RED     ,DOT_PIXEL_2X2,DRAW_FILL_EMPTY);
   
+  if (Serial.available() > 0) {
+  String sensorDataReceived = "";
+  sensorDataReceived = Serial.readString();
+  if(sensorDataReceived != ""){
+      String soilMoistureReading = splitString(sensorDataReceived,';',0);
+      String temperatureReading = splitString(sensorDataReceived,';',1);
+      String humidityReading = splitString(sensorDataReceived,';',2);
+      String lightReading = splitString(sensorDataReceived,';',3);
+
+      Serial.println("Arduino said:");
+      Serial.println("soilMoistureReading: " + soilMoistureReading);
+      Serial.println("temperatureReading: " + temperatureReading);
+      Serial.println("humidityReading: " + humidityReading);
+      Serial.println("lightReading: " + lightReading);
+    }
+  
+  }
+}
 
 // https://stackoverflow.com/questions/9072320/split-string-into-string-array
 String splitString(String data, char separator, int index)
