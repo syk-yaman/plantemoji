@@ -1,39 +1,46 @@
-const int moisturePin = A5;
-const int ldrPin = A4;
+const int capacitiveMoisturePin = A5;
 const int nailsMoisturePin = A3;
 const int nailsVCC = A0;
 
 #include <DHT.h>;
 
 //Constants
-#define DHTPIN 7     // what pin we're connected to
-#define DHTTYPE DHT22   // DHT 22  (AM2302)
+#define DHTPIN 7     //DHT pin
+#define DHTTYPE DHT22   //DHT type  (AM2302)
 DHT dht(DHTPIN, DHTTYPE); //// Initialize DHT sensor for normal 16mhz Arduino
 
 void setup()
 {
   Serial.begin(115200);
-  pinMode(ldrPin, INPUT);
-  pinMode(moisturePin, INPUT);
+  pinMode(capacitiveMoisturePin, INPUT);
   pinMode(nailsMoisturePin, INPUT);
   pinMode(nailsVCC, OUTPUT);
 
-  digitalWrite(nailsVCC, HIGH);
+  //Nails VCC pin is low in default 
+  digitalWrite(nailsVCC, LOW);
   dht.begin();
 }
 void loop()
 {
-    float soilMoistureValue = analogRead(moisturePin);
-    float ldrValue = -1; //Cancelled for now
+    //Read sensor data
+    int capacitiveMoistureValue = analogRead(capacitiveMoisturePin);
     float humidityValue = dht.readHumidity();
     float temperatureValue= dht.readTemperature();
-    int nailsMoistureValue = analogRead(nailsMoisturePin);   // read the resistance      
-  
-    //float nailSoilMoistureValue = analogRead(nailsMoisturePin);
+    int ldrValue = -1; //Cancelled for now
+    int nailsMoistureValue = readNailsMoistureValue(nailsMoisturePin);
 
-    String sensorData = String(soilMoistureValue) + ";" + String(temperatureValue) + ";" +
+    //Combine all sensor data to be sent over serial
+    String sensorData = String(capacitiveMoistureValue) + ";" + String(temperatureValue) + ";" +
                         String(humidityValue) + ";" + String(ldrValue) + ";" + String(nailsMoistureValue);
-                        
+                                            
     Serial.println(sensorData);
-    delay(1000);
+    delay(2000);
+}
+
+int readNailsMoistureValue(int nailsMoisturePin){
+   digitalWrite(nailsVCC, HIGH);
+   delay(200);
+   int nailsMoistureValue = analogRead(nailsMoisturePin);   // read the resistance      
+   digitalWrite(nailsVCC, LOW);
+   return nailsMoistureValue;
 }
