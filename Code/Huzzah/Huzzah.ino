@@ -114,7 +114,7 @@ void sendMQTT(String soilMoistureReading, String temperatureReading,
   client.loop();
 
   soilMoistureReading.toCharArray(msg,soilMoistureReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/moisture", msg);
+  client.publish("student/CASA0014/plant/ucfnmyr/moistureCapacitive", msg);
 
   temperatureReading.toCharArray(msg,temperatureReading.length());
   client.publish("student/CASA0014/plant/ucfnmyr/temperature", msg);
@@ -123,7 +123,7 @@ void sendMQTT(String soilMoistureReading, String temperatureReading,
   client.publish("student/CASA0014/plant/ucfnmyr/humidity", msg);
   
   nailSoilMoistureReading.toCharArray(msg,nailSoilMoistureReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/moistureNails", msg);
+  client.publish("student/CASA0014/plant/ucfnmyr/moisture", msg);
 
   sprintf(msg, "%05d", mood);
   client.publish("student/CASA0014/plant/ucfnmyr/mood", msg);
