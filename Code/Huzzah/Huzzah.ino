@@ -22,7 +22,7 @@ const char* mqtt_server = "mqtt.cetools.org";
 WiFiClient espClient;
 PubSubClient client(espClient);
 char msg[50];
-
+int currentMood = -1;
 
 Timezone GB;
 
@@ -35,12 +35,7 @@ void setup() {
   Paint_Clear(BLACK);
   
   Serial.println("Hi");
-  Serial.println("Drawing happy face");
-
-  delay(500);
-  Paint_Clear(BLACK);
-  Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
-  
+ 
   Serial.print("Connecting to ");
   Serial.println(SECRET_SSID);
 
@@ -66,14 +61,6 @@ void setup() {
   client.setServer(mqtt_server, 1884);
   client.setCallback(callback); 
   
-  
-  
-  Serial.println("Drawing sad face");
-
-  delay(500);
-  Paint_Clear(BLACK);
-  Paint_DrawImage(gImage_sad, 5, 5, 165, 160); 
-
   pinMode(BUILTIN_LED, OUTPUT);     
   digitalWrite(BUILTIN_LED, HIGH);  
 }
@@ -98,35 +85,28 @@ void loop() {
       Serial.println("humidityReading: " + humidityReading);
       Serial.println("lightReading: " + lightReading);
       Serial.println("nailSoilMoistureReading: " + nailSoilMoistureReading);
-      
-      sendMQTT(soilMoistureReading, temperatureReading, humidityReading, lightReading, nailSoilMoistureReading);
 
+      int mood = resolveMood(soilMoistureReading.toFloat());
+      sendMQTT(soilMoistureReading, temperatureReading, humidityReading, lightReading, nailSoilMoistureReading, mood);
+      drawMoodOnScreen(mood);
     }
   
   }
 }
 
-// https://stackoverflow.com/questions/9072320/split-string-into-string-array
-String splitString(String data, char separator, int index)
-{
-  int found = 0;
-  int strIndex[] = {0, -1};
-  int maxIndex = data.length()-1;
-
-  for(int i=0; i<=maxIndex && found<=index; i++){
-    if(data.charAt(i)==separator || i==maxIndex){
-        found++;
-        strIndex[0] = strIndex[1]+1;
-        strIndex[1] = (i == maxIndex) ? i+1 : i;
-    }
+int resolveMood(float soilMoistureReading){
+  if(soilMoistureReading >350)
+  {
+    return 0;
   }
-
-  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
+  if(soilMoistureReading <350)
+  {
+    return 1;
+  }
 }
 
-
 void sendMQTT(String soilMoistureReading, String temperatureReading,
-              String humidityReading, String lightReading, String nailSoilMoistureReading) {
+              String humidityReading, String lightReading, String nailSoilMoistureReading, int mood) {
 
   if (!client.connected()) {
     reconnect();
@@ -134,24 +114,38 @@ void sendMQTT(String soilMoistureReading, String temperatureReading,
   client.loop();
 
   soilMoistureReading.toCharArray(msg,soilMoistureReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/soilMoisture", msg);
+  client.publish("student/CASA0014/plant/ucfnmyr/moisture", msg);
 
   temperatureReading.toCharArray(msg,temperatureReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/temperature", msg);
+  client.publish("student/CASA0014/plant/ucfnmyr/temperature", msg);
 
   humidityReading.toCharArray(msg,humidityReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/humidity", msg);
-
-  lightReading.toCharArray(msg,lightReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/light", msg);
-
+  client.publish("student/CASA0014/plant/ucfnmyr/humidity", msg);
   
   nailSoilMoistureReading.toCharArray(msg,nailSoilMoistureReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/nailSoilMoisture", msg);
-  
-  String happy = "happy!";
-  happy.toCharArray(msg, happy.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/mood", msg);
+  client.publish("student/CASA0014/plant/ucfnmyr/moistureNails", msg);
+
+  sprintf(msg, "%05d", mood);
+  client.publish("student/CASA0014/plant/ucfnmyr/mood", msg);
+}
+
+void drawMoodOnScreen(int mood){
+
+  if(mood == 0 && currentMood != 0)
+  {
+    currentMood = 0;
+    Serial.println("Drawing sad face");
+    Paint_Clear(BLACK);
+    Paint_DrawImage(gImage_sad, 5, 5, 165, 160); 
+  }
+
+  if(mood == 1 && currentMood != 1)
+  {
+    currentMood = 1;
+    Serial.println("Drawing happy face");
+    Paint_Clear(BLACK);
+    Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
+  } 
 }
 
 void reconnect() {
@@ -166,7 +160,7 @@ void reconnect() {
     if (client.connect(clientId.c_str(), mqttuser, mqttpass)) {
       Serial.println("connected");
       // ... and subscribe to messages on broker
-      client.subscribe("student/CASA0014/plant/ucfnmyr/control");
+      client.subscribe("student/CASA0014/plant/ucfnmyr/plantemoji");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -194,4 +188,22 @@ void callback(char* topic, byte* payload, unsigned int length) {
     digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
   }
 
+}
+
+// https://stackoverflow.com/questions/9072320/split-string-into-string-array
+String splitString(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
