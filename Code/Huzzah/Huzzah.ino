@@ -12,52 +12,45 @@
 //TimeZone import
 #include <ezTime.h>
 
+//Constants
 const char* ssid     = SECRET_SSID;
 const char* password = SECRET_PASS;
 const char* mqttuser = SECRET_MQTTUSER;
 const char* mqttpass = SECRET_MQTTPASS;   
-
 const char* mqtt_server = "mqtt.cetools.org";
 
+//Internal fields
 WiFiClient espClient;
 PubSubClient client(espClient);
 char msg[50];
 int currentMood = -1;
-
 Timezone GB;
 
 void setup() {
-  Config_Init();
-  LCD_Init();
-  
-  LCD_SetBacklight(100);
-  Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 90, BLACK);
-  Paint_Clear(BLACK);
+  initialiseLCDScreen();
   
   Serial.println("Hi");
- 
+
+  //Connect to an SSID and print local IP address, taken from CASA plant monitoring class
   Serial.print("Connecting to ");
   Serial.println(SECRET_SSID);
-
   WiFi.begin(SECRET_SSID, SECRET_PASS);
-  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-
   Serial.println("");
   Serial.println("WiFi connected");  
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
+  //Initialise time settings
   waitForSync();
-
   Serial.println("UTC: " + UTC.dateTime());
-
   GB.setLocation("Europe/London");
   Serial.println("London time: " + GB.dateTime());  
 
+  //Initialise MQTT connection
   client.setServer(mqtt_server, 1884);
   client.setCallback(callback); 
   
@@ -67,8 +60,8 @@ void setup() {
 
 
 void loop() {
-  //Paint_DrawRectangle(125, 10, 225, 58, RED     ,DOT_PIXEL_2X2,DRAW_FILL_EMPTY);
-  
+  //When a new sensor reading is received from Arduino, it will be parsed and 
+  //sent over MQTT, then the LCD screen is updated accordingly
   if (Serial.available() > 0) {
   String sensorDataReceived = "";
   sensorDataReceived = Serial.readString();
@@ -94,12 +87,14 @@ void loop() {
   }
 }
 
+// Decide if the plant is happy or sad according to soil moisture,
+// to be developed in the future to include other sensors
 int resolveMood(float soilMoistureReading){
-  if(soilMoistureReading >350)
+  if(soilMoistureReading >400)
   {
     return 0;
   }
-  if(soilMoistureReading <350)
+  if(soilMoistureReading <400)
   {
     return 1;
   }
@@ -129,6 +124,17 @@ void sendMQTT(String soilMoistureReading, String temperatureReading,
   client.publish("student/CASA0014/plant/ucfnmyr/mood", msg);
 }
 
+//Preparing & clearing LCD screen
+void initialiseLCDScreen(){
+  Config_Init();
+  LCD_Init();
+  
+  LCD_SetBacklight(100);
+  Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 90, BLACK);
+  Paint_Clear(BLACK);
+}
+
+//LCD screen output
 void drawMoodOnScreen(int mood){
 
   if(mood == 0 && currentMood != 0)
@@ -148,6 +154,7 @@ void drawMoodOnScreen(int mood){
   } 
 }
 
+//MQTT reconnection, taken from CASA plant monitoring class
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {    // while not (!) connected....
@@ -171,6 +178,7 @@ void reconnect() {
   }
 }
 
+//MQTT callback event, taken from CASA plant monitoring class
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -190,6 +198,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 }
 
+// Useful string splitting function, taken from:
 // https://stackoverflow.com/questions/9072320/split-string-into-string-array
 String splitString(String data, char separator, int index)
 {
