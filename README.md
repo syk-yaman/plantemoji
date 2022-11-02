@@ -54,6 +54,7 @@ Grafana dashboard            |  InfluxDB dashboard		 |  MQTT feed
 :---------------------------:|:-------------------------:|:-------------------------:
 ![](/Docs/grafana-result.jpg)|   ![](/Docs/influxdb-result.jpg)|   ![MQTT](/Docs/mqtt-result.jpg)
 
+See [here](/Docs/DAQ/DAQ.md) for more detailed comparisons between sensor types.
 
 ## Future work
 
