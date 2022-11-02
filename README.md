@@ -11,6 +11,10 @@ This mind map explains how the system is composed, down from reading sensors and
 
 ![System components overview](/Docs/System-mind-map.jpg)
 
+The objective of this plant monitor are:
+ - Try to inteprete sensor data for the end user.
+ - Make comparisons of different soil mositure sensors, and same sensor in different conditions.
+
 ## Buidling
 
 ### Used components
@@ -28,13 +32,20 @@ Software:
  - [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/)
  - [Grafana](https://grafana.com/)
  - [Docker Compose](https://docs.docker.com/compose/)
+ All the software applications are packed into one [Docker image](/Server/docker-compose.yml).
  
 Tools:
- - [Image2Lcd](https://www.waveshare.com/wiki/File:Image2Lcd.7z): converts BMP images to byte arrays to be stored on MCUs
+ - [Image2Lcd](https://www.waveshare.com/wiki/File:Image2Lcd.7z): converts BMP images to byte arrays stored in MCUs to be displayed on the LCD screen (please follow [these settings](/Docs/Image2LCD%20app%20settings.jpg).
  
 ### Hardware schematic
 
 ![Hardware schematic](/Docs/schematic.png)
+
+### Work highlights
+ - Sensors are connected to Arduino now due to the availibility of many ADC ports compared to HUZZAH.
+ - LCD screen driver was ported from Arduino to work on HUZZAH, the latter has more memory and capability to drive screens compared to Arduino.
+ - New MQTT topics added: `moistureCapacitive` and `mood`.
+ - Redo RaspberryPi setup on 
 
 ## Results discusion
 
