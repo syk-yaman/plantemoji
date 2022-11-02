@@ -1,4 +1,4 @@
-```markdown
+
 # Plantemoji: A plant monitor made in CASA, UCL
 
 A simple device with a web infrastructure to monitor plants and explain thier living state in emojis. Basically, plants will be able to talk with you using emojis!
@@ -17,6 +17,3 @@ TBD
 Reminders for next time.
 
  - 
-
-
-```
