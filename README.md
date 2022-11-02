@@ -78,7 +78,7 @@ See [here](/Docs/DAQ/DAQ.md) for more detailed comparisons between sensor types.
 
 ## License
 
-TODO: Ask about what license I should use in this project
+TODO: Ask what license I should use in this project
 
 ###### The software side is licensed under MIT License
 
