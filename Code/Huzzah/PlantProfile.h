@@ -1,0 +1,3 @@
+#define PLANT_NAME "Rubber Plant"
+#define LOWER_MOISTURE_LEVEL 400
+#define LOWER_HUMIDITY_LEVEL 40

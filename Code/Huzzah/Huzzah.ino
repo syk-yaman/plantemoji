@@ -19,6 +19,9 @@ const char* mqttuser = SECRET_MQTTUSER;
 const char* mqttpass = SECRET_MQTTPASS;   
 const char* mqtt_server = "mqtt.cetools.org";
 
+//Plant profile
+#include "PlantProfile.h"
+
 //Internal fields
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -79,7 +82,7 @@ void loop() {
       Serial.println("lightReading: " + lightReading);
       Serial.println("nailSoilMoistureReading: " + nailSoilMoistureReading);
 
-      int mood = resolveMood(soilMoistureReading.toFloat());
+      int mood = resolveMood(soilMoistureReading.toFloat(), humidityReading.toFloat());
       sendMQTT(soilMoistureReading, temperatureReading, humidityReading, lightReading, nailSoilMoistureReading, mood);
       drawMoodOnScreen(mood);
     }
@@ -87,15 +90,19 @@ void loop() {
   }
 }
 
-// Decide if the plant is happy or sad according to soil moisture,
+// Decide if the plant is happy or sad according to soil moisture and humidity,
 // to be developed in the future to include other sensors
-int resolveMood(float soilMoistureReading){
-  if(soilMoistureReading >400)
+int resolveMood(float soilMoistureReading, float humidityReading){
+  if(soilMoistureReading > LOWER_MOISTURE_LEVEL)
   {
     return 0;
   }
-  if(soilMoistureReading <400)
+  if(soilMoistureReading < LOWER_MOISTURE_LEVEL)
   {
+    if(humidityReading< LOWER_HUMIDITY_LEVEL)
+    {
+      return 0;
+    }
     return 1;
   }
 }
