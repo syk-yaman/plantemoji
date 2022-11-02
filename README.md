@@ -49,12 +49,14 @@ Tools:
  - New MQTT topics added: `moistureCapacitive` for the capacitive sensor and `mood` which is derived from sensor data according to plant profile.
  - [Plant profile](/Code/Huzzah/PlantProfile.h): a file containing the suitable living environment parameters for the desired plant. The mood of the plant (happy - sad) is determined based on this profile.
  
-## Results discusion
+## Results
 Grafana dashboard            |  InfluxDB dashboard
 :---------------------------:|:-------------------------:
 ![](/Docs/grafana-result.jpg)|   ![](/Docs/influxdb-result.jpg)
 
-![MQTT](/Docs/mqtt-result.jpg)
+Grafana dashboard            |
+:---------------------------:|
+![MQTT](/Docs/mqtt-result.jpg)| 
 
 ## Future work
 
