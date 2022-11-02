@@ -7,13 +7,13 @@ A simple device with a web infrastructure to monitor plants and explain their li
 
 ## Overview
 
-This mind map explains how the system is composed, down from reading sensors and understanding their values, and later sending them up to the cloud for further analysis and visualisation.
+This conceptual diagram explains how the system is composed, down from reading sensors and understanding their values, and later sending them up to the cloud for further analysis and visualisation.
 
 ![System components overview](/Docs/System-mind-map.jpg)
 
-The objective of this plant monitor are:
+The objectives of this plant monitor are:
  - Interpret sensor data for the end user in a human-friendly way.
- - Take into consideration plant environment requirements during the monitoring process.
+ - Take into consideration plant living requirements during the monitoring process.
  - Make comparisons between different soil moisture sensors and the same sensor in different conditions.
  
 ## Buidling
@@ -50,6 +50,11 @@ Tools:
  - [Plant profile](/Code/Huzzah/PlantProfile.h): a file containing the suitable living environment parameters for the desired plant. The mood of the plant (happy - sad) is determined based on this profile.
  
 ## Results discusion
+Grafana dashboard            |  InfluxDB dashboard
+:---------------------------:|:-------------------------:
+![](/Docs/grafana-result.jpg)|   ![](/Docs/influxdb-result.jpg)
+
+![MQTT](/Docs/mqtt-result.jpg)
 
 ## Future work
 
@@ -57,7 +62,7 @@ Tools:
 
 ## Lessons learned
  - Understanding the data from a simple sensor in the real world is not easy due to the effect of environment parameters and setup conditions.
- - Print a 3D case and try to be gentle with screens!
- - Visualising the data can make us understand the surrounding environment better.
- - If a serial connection is needed between two devices with different power sources, their GND should be connected together. Of course, they also must have the same baud rate.
+ - Remember: Always print a 3D case and try to be gentle with screens!
+ - Visualising the data can make us understand the surrounding environment in a better way.
+ - If a serial connection is needed between two devices with different power sources, their GND should be connected together. And of course, they also must have the same baud rate.
  
