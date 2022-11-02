@@ -50,13 +50,10 @@ Tools:
  - [Plant profile](/Code/Huzzah/PlantProfile.h): a file containing the suitable living environment parameters for the desired plant. The mood of the plant (happy - sad) is determined based on this profile.
  
 ## Results
-Grafana dashboard            |  InfluxDB dashboard
-:---------------------------:|:-------------------------:
-![](/Docs/grafana-result.jpg)|   ![](/Docs/influxdb-result.jpg)
+Grafana dashboard            |  InfluxDB dashboard		 |  MQTT feed
+:---------------------------:|:-------------------------:|:-------------------------:
+![](/Docs/grafana-result.jpg)|   ![](/Docs/influxdb-result.jpg)|   ![MQTT](/Docs/mqtt-result.jpg)
 
-Grafana dashboard            |
-:---------------------------:|
-![MQTT](/Docs/mqtt-result.jpg)| 
 
 ## Future work
 
