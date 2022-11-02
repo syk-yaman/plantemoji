@@ -29,6 +29,9 @@ Software:
  - [Grafana](https://grafana.com/)
  - [Docker Compose](https://docs.docker.com/compose/)
  
+Tools:
+ - [Image2Lcd](https://www.waveshare.com/wiki/File:Image2Lcd.7z): converts BMP images to byte arrays to be stored on MCUs
+ 
 ### Hardware schematic
 
 ![Hardware schematic](/Docs/schematic.png)
