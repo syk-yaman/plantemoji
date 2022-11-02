@@ -66,6 +66,7 @@ See [here](/Docs/DAQ/DAQ.md) for more detailed comparisons between sensor types.
 ## Resources and references
 - [Capacitive sensors principles](https://makersportal.com/blog/2020/5/26/capacitive-soil-moisture-calibration-with-arduino)
 - [Serial communication](https://circuitdigest.com/microcontroller-projects/arduino-spi-communication-tutorial)
+- [InfluxDB course](https://university.influxdata.com/courses/influxdb-essentials-tutorial/)
 
 ## Lessons learned
  - Understanding the data from a simple sensor in the real world is not easy due to the effect of environment parameters and setup conditions.
