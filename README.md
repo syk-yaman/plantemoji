@@ -16,7 +16,7 @@ This mind map explains how the system is composed, down from reading sensors and
 ### Used components
 
 Hardware:
- - Arduino
+ - [Arduino UNO](https://store.arduino.cc/products/arduino-uno-rev3)
  - Huzzah
  - Huzzah-DHT22 CASA shield (https://github.com/ucl-casa-ce/casa0014/blob/main/plantMonitor/README.md#multiple-physical-prototypes)
  - DH22
