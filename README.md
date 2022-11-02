@@ -8,13 +8,24 @@ A simple device with a web infrastructure to monitor plants and explain their li
 ## Overview
 
 This mind map explains how the system is composed, down from reading sensors and understanding their values, and later sending them up to the cloud for further analysis and visualisation.
+
 ![System components overview](/Docs/System-mind-map.jpg)
 
 ## Buidling
 
-### Used parts
+### Used components
 
-### Schematic
+Hardware:
+ - Arduino
+ - Huzzah
+ - Huzzah-DHT22 CASA shield (https://github.com/ucl-casa-ce/casa0014/blob/main/plantMonitor/README.md#multiple-physical-prototypes)
+ - DH22
+ - HW-390
+ - Nails
+ - Screen
+### Hardware schematic
+
+![Hardware schematic](/Docs/schematic.png)
 
 ## Results discusion
 
