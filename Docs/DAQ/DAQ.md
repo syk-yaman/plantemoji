@@ -6,10 +6,10 @@
 ![Nail angle DAQ](/Docs/DAQ/nails-angle-daq.png)
 
 Number indication:
-(1) nails' ends are closest together at 2cm inside the soil
-(2) nails' ends are at 3cm inside the soil
-(3) nails' ends are furthest at 5cm inside the soil
-(4) same as (3) with depth increasing
+1. nails' ends are closest together at 2cm inside the soil
+2. nails' ends are at 3cm inside the soil
+3. nails' ends are furthest at 5cm inside the soil
+4. same as (3) with depth increasing
 
 
 ## Two nail sensor; one has new nails, and the other has corroded nails
@@ -19,15 +19,15 @@ Number indication:
 ![Nail corrosion DAQ](/Docs/DAQ/nails-good-vs-corroded-daq.png)
 
 Number indication:
-(1) good nails
-(2) corroded nails
+1. good nails
+2. corroded nails
 
 ## Capacitive sensor with different depth
 
 ![Capacitive depth DAQ](/Docs/DAQ/capacitive-depth-daq.png)
 
 Number indication:
-(1) sensor is inside the soil at the intended mark on its PCB
-(2) sensor is deeper inside the soil by 1cm below the mark
-(3) sensor is above the soil by 1cm above the mark
+1. sensor is inside the soil at the intended mark on its PCB
+2. sensor is deeper inside the soil by 1cm below the mark
+4. sensor is above the soil by 1cm above the mark
 
