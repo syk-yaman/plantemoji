@@ -57,8 +57,15 @@ Grafana dashboard            |  InfluxDB dashboard		 |  MQTT feed
 See [here](/Docs/DAQ/DAQ.md) for more detailed comparisons between sensor types.
 
 ## Future work
+- Add more plants profiles.
+- Let plant profile can be controlled using HTTP.
+- Add mobile notifications.
+- Do more comparisons with other sensor conditions.
+- Add more emojis to express plant mood further.
 
 ## Resources and references
+- [Capacitive sensors principles](https://makersportal.com/blog/2020/5/26/capacitive-soil-moisture-calibration-with-arduino)
+- [Serial communication](https://circuitdigest.com/microcontroller-projects/arduino-spi-communication-tutorial)
 
 ## Lessons learned
  - Understanding the data from a simple sensor in the real world is not easy due to the effect of environment parameters and setup conditions.
