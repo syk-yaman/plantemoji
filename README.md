@@ -17,12 +17,18 @@ This mind map explains how the system is composed, down from reading sensors and
 
 Hardware:
  - [Arduino UNO](https://store.arduino.cc/products/arduino-uno-rev3)
- - Huzzah
- - Huzzah-DHT22 CASA shield (https://github.com/ucl-casa-ce/casa0014/blob/main/plantMonitor/README.md#multiple-physical-prototypes)
- - DH22
- - HW-390
- - Nails
- - Screen
+ - [Adafruit Feather HUZZAH ESP8266] (https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/)
+ - Huzzah-DHT22 CASA shield [From here] (https://github.com/ucl-casa-ce/casa0014/blob/main/plantMonitor/README.md#multiple-physical-prototypes)
+ - Humidity and temperature sensor [DH22] (https://www.adafruit.com/product/385)
+ - Capacitive Soil Moisture Sensor [HW-390] (https://thepihut.com/products/capacitive-soil-moisture-sensor?variant=32137736421438)
+ - 1.47" LCD Display [Waveshare 1.47" LCD] (https://thepihut.com/products/1-47-rounded-spi-lcd-display-module-172x320?variant=42062646509763)
+ 
+Software:
+ - [InfluxDB] (https://www.influxdata.com/)
+ - [Telegraf] (https://www.influxdata.com/time-series-platform/telegraf/)
+ - [Grafana] (https://grafana.com/)
+ - [Docker Compose] (https://docs.docker.com/compose/)
+ 
 ### Hardware schematic
 
 ![Hardware schematic](/Docs/schematic.png)
