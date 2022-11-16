@@ -16,7 +16,7 @@ The objectives of this plant monitor are:
  - Take into consideration plant living requirements during the monitoring process.
  - Make comparisons between different soil moisture sensors and the same sensor in different conditions.
  
-## Buidling
+## Building
 
 ### Used components and tools
 
@@ -78,7 +78,6 @@ See [here](/Docs/DAQ/DAQ.md) for more detailed comparisons between sensor types.
 
 ## License
 
-TODO: Ask what license I should use in this project
 
 ###### The software side is licensed under MIT License
 
