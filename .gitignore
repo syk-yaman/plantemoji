@@ -5,3 +5,5 @@ arduino_secrets.h
 *.s#4
 *.s#5
 *.s#6
+*.atsuo
+Code/demos/ArduinoDS18B20/AVR/Plantemoji/Debug/
