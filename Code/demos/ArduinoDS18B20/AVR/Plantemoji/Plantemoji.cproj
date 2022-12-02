@@ -140,9 +140,30 @@
     <Compile Include="delay.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="ds18b20\ds18b20.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ds18b20\ds18b20.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ds18b20\onewire.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ds18b20\onewire.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ds18b20\romsearch.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ds18b20\romsearch.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ds18b20" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
