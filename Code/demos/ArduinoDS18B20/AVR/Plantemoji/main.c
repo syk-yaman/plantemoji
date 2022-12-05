@@ -41,14 +41,14 @@ int main()
 		usart_pstr(strbuf2);
 		_delay_ms(1000);
 
-		//Start conversion (without ROM matching)
-		ds18b20convert( &PORTB, &DDRB, &PINB, ( 1 << 0 ), NULL );
+		//Start conversion (without ROM matching) 1 << (0) means pin.0, 1 << (5) means pin.5  
+		ds18b20convert( &PORTC, &DDRC, &PINC, ( 1 << 0 ), NULL );
 
 		//Delay (sensor needs time to perform conversion)
 		_delay_ms( 1000 );
 
 		//Read temperature (without ROM matching)
-		ds18b20read( &PORTB, &DDRB, &PINB, ( 1 << 0 ), NULL, &temp );
+		ds18b20read( &PORTC, &DDRC, &PINC, ( 1 << 0 ), NULL, &temp );
 
 		char strbuf3[400];
 		sprintf (strbuf3, "temp: %d \r\n", temp);
@@ -65,7 +65,7 @@ int main()
 void initPorts(){
 	DDRB = 0x00; // Set PORT B to input
 	
-	DDRC = DDRC & 0b11101111; // Set PORT D to input
+	DDRC = DDRC & 0b11101110; // Set PORT C to input
 	PORTC = PORTC | 0b00010000; //enable pull-ups
 }
 
