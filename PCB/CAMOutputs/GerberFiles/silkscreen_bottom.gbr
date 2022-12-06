@@ -1,0 +1,18 @@
+G04 EAGLE Gerber RS-274X export*
+G04 #@! %TF.Part,Single*
+G04 #@! %TF.FileFunction,Legend,Bot,1*
+G04 #@! %TF.FilePolarity,Positive*
+G04 #@! %TF.GenerationSoftware,Autodesk,EAGLE,9.6.2*
+G04 #@! %TF.CreationDate,2022-12-06T08:18:15Z*
+G75*
+%MOMM*%
+%FSLAX34Y34*%
+%LPD*%
+%INSilkscreen Bottom*%
+%IPPOS*%
+%AMOC8*
+5,1,8,0,0,1.08239X$1,22.5*%
+G01*
+
+
+M02*

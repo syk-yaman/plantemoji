@@ -14116,6 +14116,7 @@ high speed (Philips)</description>
 <part name="GND19" library="supply1" deviceset="GND" device=""/>
 <part name="EXTRA_GPIO" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X2" device="" package3d_urn="urn:adsk.eagle:package:22435/2"/>
 <part name="P+15" library="supply1" deviceset="+5V" device=""/>
+<part name="EXTRA_GPIO2" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-1X2" device="" package3d_urn="urn:adsk.eagle:package:22435/2"/>
 </parts>
 <sheets>
 <sheet>
@@ -14370,6 +14371,10 @@ high speed (Philips)</description>
 </instance>
 <instance part="P+15" gate="1" x="139.7" y="162.56" smashed="yes">
 <attribute name="VALUE" x="137.16" y="157.48" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="EXTRA_GPIO2" gate="G$1" x="30.48" y="99.06" smashed="yes" rot="R180">
+<attribute name="NAME" x="36.83" y="93.345" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="36.83" y="104.14" size="1.778" layer="96" rot="R180"/>
 </instance>
 </instances>
 <busses>
@@ -14927,6 +14932,21 @@ high speed (Philips)</description>
 <pinref part="FTR1" gate="G$1" pin="SDA/GPIO-4"/>
 <wire x1="182.88" y1="83.82" x2="182.88" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="182.88" y1="96.52" x2="180.34" y2="96.52" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$33" class="0">
+<segment>
+<pinref part="IC3" gate="G$1" pin="PB6(XTAL1/TOSC1)"/>
+<pinref part="EXTRA_GPIO2" gate="G$1" pin="2"/>
+<wire x1="43.18" y1="99.06" x2="33.02" y2="99.06" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$34" class="0">
+<segment>
+<pinref part="IC3" gate="G$1" pin="PB7(XTAL2/TOSC2)"/>
+<pinref part="EXTRA_GPIO2" gate="G$1" pin="1"/>
+<wire x1="43.18" y1="93.98" x2="43.18" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="96.52" x2="33.02" y2="96.52" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
