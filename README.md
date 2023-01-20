@@ -7,9 +7,13 @@ A plant caring and irrigation device with a web infrastructure to monitor and co
 
 ![System components overview](/Docs/Photos/Full-device.jpg)
 
-![System components overview](/Docs/Photos/Pot-3D-design.gif)
+Plant container			          							 |  Water bucket	 
+:-----------------------------------------------------------:|:-------------------------------------------------------------------------
+![System components overview](/Docs/Photos/Pot-3D-design.gif)|   ![System components overview](/Docs/Photos/Water-bucket-3D-design.gif)
 
-![System components overview](/Docs/Photos/Water-bucket-3D-design.gif)
+
+
+
 
 ## Overview
 
