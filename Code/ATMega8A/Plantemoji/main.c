@@ -34,13 +34,17 @@ int main()
 
 	int temp;
 	
+	PORTD = PORTD | 0b11111111;
+	_delay_ms( 5000 );
+	PORTD = PORTD | 0b00000000;
+
 	while(1)
 	{
 		char strbuf2[400];
 		sprintf (strbuf2, "hi! \r\n");
 		usart_pstr(strbuf2);
 		_delay_ms(1000);
-
+		
 		//Start conversion (without ROM matching) 1 << (0) means pin.0, 1 << (5) means pin.5  
 		ds18b20convert( &PORTC, &DDRC, &PINC, ( 1 << 0 ), NULL );
 
@@ -52,6 +56,7 @@ int main()
 
 		char strbuf3[400];
 		sprintf (strbuf3, "temp: %d \r\n", temp);
+		
 		usart_pstr(strbuf3);
 		
 		//Somehow use data stored in `temp` variable
@@ -64,8 +69,9 @@ int main()
 
 void initPorts(){
 	DDRB = 0x00; // Set PORT B to input
+	DDRB = 0x00;
 	
-	DDRC = DDRC & 0b11101110; // Set PORT C to input
+	DDRD = DDRD | 0b11111111; // Set PORT C to output
 	PORTC = PORTC | 0b00010000; //enable pull-ups
 }
 
