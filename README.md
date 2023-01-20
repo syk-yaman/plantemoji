@@ -1,7 +1,7 @@
 
 # Plantemoji: an IoT plant monitor made in CASA, UCL
 
-A simple device with a web infrastructure to monitor and control plants environment and explain their living state in emojis. Basically, plants will be able to talk with you using emojis!
+A plant caring and irrigation device with a web infrastructure to monitor and control plants environment and explain their living state in emojis. Basically, plants will be able to talk with you using emojis!
 
 
 
