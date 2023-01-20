@@ -41,7 +41,7 @@ Tools:
  
 ### Hardware schematic
 
-![Hardware schematic](/Docs/schematic.png)
+![Hardware schematic](/PCB/schematic.png)
 
 ### Highlights
  - Sensors are connected to Arduino now due to the availability of many ADC ports compared to HUZZAH.
