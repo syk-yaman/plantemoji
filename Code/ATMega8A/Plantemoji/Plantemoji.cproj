@@ -140,6 +140,18 @@
     <Compile Include="delay.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="dht22\DHT.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dht22\DHT.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dht22\DHT_Settings.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dht22\IO_Macros.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="ds18b20\ds18b20.c">
       <SubType>compile</SubType>
     </Compile>
@@ -164,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ds18b20" />
+    <Folder Include="dht22" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
