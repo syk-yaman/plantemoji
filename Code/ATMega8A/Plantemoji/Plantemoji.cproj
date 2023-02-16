@@ -136,12 +136,6 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="delay.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="delay.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="dht22\DHT.c">
       <SubType>compile</SubType>
     </Compile>
@@ -172,13 +166,42 @@
     <Compile Include="ds18b20\romsearch.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="i2c\delay.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c\delay.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c\i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c\i2c.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c\stdutils.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="si1145\io_spa.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="si1145\io_spa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="si1145\si1145.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="si1145\si1145.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ds18b20" />
     <Folder Include="dht22" />
+    <Folder Include="i2c" />
+    <Folder Include="si1145" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
