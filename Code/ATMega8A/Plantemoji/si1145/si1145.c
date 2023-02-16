@@ -229,7 +229,7 @@ static SI1145_RC si1145_send_cmd(SI1145_CMD cmd, uint8_t cmd_low_bits)
 			}
 			if (++command_retries >= SI1145_CONST_MAX_CMD_RETRIES)
 			{
-				printf("Timed out completing command: 0x%x\n", cmd);
+				//printf("Timed out completing command: 0x%x\n", cmd);
 				return SI1145_FAILURE;
 			}
 		}
@@ -255,7 +255,7 @@ SI1145_RC si1145_init(const char *bus, uint8_t addr, uint8_t config_bitmap)
 	/* Reset device */
 	if (si1145_send_cmd(SI1145_CMD_RESET, 0x0) != SI1145_OK)
 	{
-		printf("Failed to initialize SI1145 (%s)\n", "Reset");
+		//printf("Failed to initialize SI1145 (%s)\n", "Reset");
 		return SI1145_FAILURE;
 	}
 
@@ -267,14 +267,14 @@ SI1145_RC si1145_init(const char *bus, uint8_t addr, uint8_t config_bitmap)
 	si1145_check_reg(SI1145_REG_REV_ID, SI1145_CONST_REV_ID) != SI1145_OK ||
 	si1145_check_reg(SI1145_REG_SEQ_ID, SI1145_CONST_SEQ_ID) != SI1145_OK)
 	{
-		printf("Failed to initialize SI1145 (%s)\n", "Read Only checks");
+		//printf("Failed to initialize SI1145 (%s)\n", "Read Only checks");
 		return SI1145_FAILURE;
 	}
 
 	/* HW key */
 	if (si1145_write_check_reg(SI1145_REG_HW_KEY, SI1145_CONST_HW_KEY) != SI1145_OK)
 	{
-		printf("Failed to initialize SI1145 (%s)\n", "HW Key");
+		//printf("Failed to initialize SI1145 (%s)\n", "HW Key");
 		return SI1145_FAILURE;
 	}
 
@@ -301,14 +301,14 @@ SI1145_RC si1145_init(const char *bus, uint8_t addr, uint8_t config_bitmap)
 			/* Set VIS_RANGE */
 			if (si1145_write_ram(SI1145_RAM_ALS_VIS_ADC_MISC, SI1145_CONST_VIS_RANGE) != SI1145_OK)
 			{
-				printf("Failed to initialize SI1145 (%s)\n", "ALS VIS Range");
+				//printf("Failed to initialize SI1145 (%s)\n", "ALS VIS Range");
 				return SI1145_FAILURE;
 			}
 
 			/* Set IR_RANGE */
 			if (si1145_write_ram(SI1145_RAM_ALS_IR_ADC_MISC, SI1145_CONST_IR_RANGE) != SI1145_OK)
 			{
-				printf("Failed to initialize SI1145 (%s)\n", "ALS IR Range");
+				//printf("Failed to initialize SI1145 (%s)\n", "ALS IR Range");
 				return SI1145_FAILURE;
 			}
 		}
@@ -319,7 +319,7 @@ SI1145_RC si1145_init(const char *bus, uint8_t addr, uint8_t config_bitmap)
 		si1145_write_check_reg(SI1145_REG_UCOEF2, SI1145_CONST_UCOEF2) != SI1145_OK ||
 		si1145_write_check_reg(SI1145_REG_UCOEF3, SI1145_CONST_UCOEF3) != SI1145_OK)
 		{
-			printf("Failed to initialize SI1145 (%s)\n", "UCOEF");
+			//printf("Failed to initialize SI1145 (%s)\n", "UCOEF");
 			return SI1145_FAILURE;
 		}
 	}
@@ -330,7 +330,7 @@ SI1145_RC si1145_init(const char *bus, uint8_t addr, uint8_t config_bitmap)
 		if (si1145_write_check_reg(SI1145_REG_MEAS_RATE0, SI1145_CONST_MEAS_RATE0_SLOW) != SI1145_OK ||
 		si1145_write_check_reg(SI1145_REG_MEAS_RATE1, SI1145_CONST_MEAS_RATE1_SLOW) != SI1145_OK)
 		{
-			printf("Failed to initialize SI1145 (%s)\n", "MEAS_RATE slow");
+			//printf("Failed to initialize SI1145 (%s)\n", "MEAS_RATE slow");
 			return SI1145_FAILURE;
 		}
 	}
@@ -341,7 +341,7 @@ SI1145_RC si1145_init(const char *bus, uint8_t addr, uint8_t config_bitmap)
 		if (si1145_write_check_reg(SI1145_REG_MEAS_RATE0, SI1145_CONST_MEAS_RATE0_FAST) != SI1145_OK ||
 		si1145_write_check_reg(SI1145_REG_MEAS_RATE1, SI1145_CONST_MEAS_RATE1_FAST) != SI1145_OK)
 		{
-			printf("Failed to initialize SI1145 (%s)\n", "MEAS_RATE fast");
+			//printf("Failed to initialize SI1145 (%s)\n", "MEAS_RATE fast");
 			return SI1145_FAILURE;
 		}
 	}

@@ -1,6 +1,5 @@
 #include <avr/io.h>
 #include <util/delay.h>
-#include <stddef.h>
 #include "ds18b20/ds18b20.h"
 #include "dht22/DHT.h"
 #include "si1145/si1145.h"
@@ -131,7 +130,7 @@ int main()
 			{
 				return 1;
 			}
-			printf("VIS_DATA: 0x%x\n", vis_data);
+			//printf("VIS_DATA: 0x%x\n", vis_data);
 			i++;
 		}
 
@@ -147,12 +146,12 @@ int main()
 		{
 			return 1;
 		}
-		printf("VIS_DATA: 0x%x\n", vis_data);
-		printf("IR_DATA: 0x%x\n", ir_data);
-		printf("PS1_DATA: 0x%x\n", ps1_data);
-		printf("PS2_DATA: 0x%x\n", ps2_data);
-		printf("PS3_DATA: 0x%x\n", ps3_data);
-		printf("UV_DATA: 0x%x\n", uv_data);
+		//printf("VIS_DATA: 0x%x\n", vis_data);
+		//printf("IR_DATA: 0x%x\n", ir_data);
+		//printf("PS1_DATA: 0x%x\n", ps1_data);
+		//printf("PS2_DATA: 0x%x\n", ps2_data);
+		//printf("PS3_DATA: 0x%x\n", ps3_data);
+		//printf("UV_DATA: 0x%x\n", uv_data);
 		
 		si1145_close();
 	}

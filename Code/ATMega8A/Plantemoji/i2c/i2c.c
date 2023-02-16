@@ -41,7 +41,7 @@ Errors and omissions should be reported to codelibraries@exploreembedded.com
  ***************************************************************************************************/
 
 #include <avr\io.h>
-#include "delay.h"
+#include <util/delay.h>
 #include "i2c.h"
 
 
@@ -116,7 +116,7 @@ void I2C_Start()
 void I2C_Stop(void)
 {
     TWCR = ((1<< TWINT) | (1<<TWEN) | (1<<TWSTO));
-    DELAY_us(100) ; //wait for a short time
+   	_delay_ms( 100 ); //wait for a short time
 }
 
 
