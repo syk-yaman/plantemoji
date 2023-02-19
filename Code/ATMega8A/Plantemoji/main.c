@@ -3,6 +3,7 @@
 #include "ds18b20/ds18b20.h"
 #include "dht22/DHT.h"
 #include "si1145/si1145.h"
+#include "i2c/i2c.h"
 
 static const char *I2C_BUS="/dev/i2c-1";
 static const int I2C_ADDR = 0x00;
@@ -30,7 +31,7 @@ int main()
 {
 	initPorts();
 	OSCCAL=0x93;
-	USART_Init(MYUBRR);	//RTC_Init();
+	USART_Init(MYUBRR);
 	
 	ADCSRA |= (1<<ADEN); //enable ADC
 	ADMUX |= ( (0<<REFS1) | (1<<REFS0) ); // set to ref to AVCC & AREF with capacitor
@@ -102,58 +103,50 @@ int main()
 		/* Si1145 Reading                                                       */
 		/************************************************************************/
 		
-		uint16_t vis_data;
-		uint16_t ir_data;
-		uint16_t ps1_data;
-		uint16_t ps2_data;
-		uint16_t ps3_data;
-		uint16_t uv_data;
-
-		if (si1145_init(I2C_BUS, I2C_ADDR, SI1145_CONFIG_BIT_ALS |
-		SI1145_CONFIG_BIT_UV |
-		SI1145_CONFIG_BIT_MEAS_RATE_SLOW |
-		SI1145_CONFIG_BIT_INDOORS) != SI1145_OK)
-		{
-			return 1;
-		}
-
-		if (si1145_measurement_auto(SI1145_MEASUREMENT_ALS) != SI1145_OK)
-		{
-			return 1;
-		}
-
-		int i = 0;
-		while (i < 5)
-		{
-			_delay_ms(2);
-			if (si1145_get_vis_data(&vis_data) != SI1145_OK)
-			{
-				return 1;
-			}
-			//printf("VIS_DATA: 0x%x\n", vis_data);
-			i++;
-		}
-
-		if (si1145_measurement_pause(SI1145_MEASUREMENT_ALS) != SI1145_OK)
-		{
-			return 1;
-		}
-
-		if (si1145_get_vis_data(&vis_data) != SI1145_OK ||
-		si1145_get_ir_data(&ir_data) != SI1145_OK ||
-		si1145_get_ps_data(&ps1_data, &ps2_data, &ps3_data) != SI1145_OK ||
-		si1145_get_uv_data(&uv_data) != SI1145_OK)
-		{
-			return 1;
-		}
-		//printf("VIS_DATA: 0x%x\n", vis_data);
-		//printf("IR_DATA: 0x%x\n", ir_data);
-		//printf("PS1_DATA: 0x%x\n", ps1_data);
-		//printf("PS2_DATA: 0x%x\n", ps2_data);
-		//printf("PS3_DATA: 0x%x\n", ps3_data);
-		//printf("UV_DATA: 0x%x\n", uv_data);
+		I2C_Init(); 
+		I2C_Start();
 		
-		si1145_close();
+		I2C_Write(SI1145_CMD_RESET);
+		_delay_ms(1000);
+		I2C_Write(SI1145_REG_HW_KEY);
+
+		I2C_Write(SI1145_CMD_RESET);
+		
+		
+		//uint16_t vis_data;
+		//uint16_t ir_data;
+		//uint16_t ps1_data;
+		//uint16_t ps2_data;
+		//uint16_t ps3_data;
+		//uint16_t uv_data;
+//
+		//si1145_init(I2C_BUS, I2C_ADDR, SI1145_CONFIG_BIT_ALS |
+		//SI1145_CONFIG_BIT_UV |
+		//SI1145_CONFIG_BIT_MEAS_RATE_SLOW |
+		//SI1145_CONFIG_BIT_INDOORS);
+//
+		//si1145_measurement_auto(SI1145_MEASUREMENT_ALS);
+//
+		//
+		//si1145_get_vis_data(&vis_data);
+		//si1145_get_ir_data(&ir_data);
+		//si1145_get_ps_data(&ps1_data, &ps2_data, &ps3_data);
+		//si1145_get_uv_data(&uv_data) ;
+	//
+		//
+		//int ir_data_int = ir_data;
+		//char strbuf7[400];
+		//sprintf (strbuf7, "uv-si1145: %d \r\n", ir_data_int);
+		//usart_pstr(strbuf7);
+		//
+		////printf("VIS_DATA: 0x%x\n", vis_data);
+		////printf("IR_DATA: 0x%x\n", ir_data);
+		////printf("PS1_DATA: 0x%x\n", ps1_data);
+		////printf("PS2_DATA: 0x%x\n", ps2_data);
+		////printf("PS3_DATA: 0x%x\n", ps3_data);
+		////printf("UV_DATA: 0x%x\n", uv_data);
+		//
+		//si1145_close();
 	}
 	return (0);
 }
