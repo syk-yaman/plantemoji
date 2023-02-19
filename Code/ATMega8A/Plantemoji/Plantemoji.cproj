@@ -178,6 +178,12 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="si11452\SI1145_WE.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="si11452\SI1145_WE.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="si1145\io_spa.h">
       <SubType>compile</SubType>
     </Compile>
@@ -195,6 +201,7 @@
     <Folder Include="dht22" />
     <Folder Include="i2c" />
     <Folder Include="ds18b20" />
+    <Folder Include="si11452" />
     <Folder Include="si1145" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />

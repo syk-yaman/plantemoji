@@ -1,12 +1,13 @@
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stddef.h>
 #include "ds18b20/ds18b20.h"
 #include "dht22/DHT.h"
-#include "si1145/si1145.h"
-#include "i2c/i2c.h"
+#include "si11452/SI1145_WE.h"
+//#include "i2c/i2c.h"
 
-static const char *I2C_BUS="/dev/i2c-1";
-static const int I2C_ADDR = 0x00;
+//static const char *I2C_BUS="/dev/i2c-1";
+//static const int I2C_ADDR = 0x00;
 
 //Macros
 #define bit_is_low(sfr,bit)(!(_SFR_BYTE(sfr) & _BV(bit)))
@@ -102,51 +103,46 @@ int main()
 		/************************************************************************/
 		/* Si1145 Reading                                                       */
 		/************************************************************************/
-		
-		I2C_Init(); 
-		I2C_Start();
-		
-		I2C_Write(SI1145_CMD_RESET);
-		_delay_ms(1000);
-		I2C_Write(SI1145_REG_HW_KEY);
+		 
+		SI1145_WE_init();
 
-		I2C_Write(SI1145_CMD_RESET);
+		/* in case you want to change the I2C Address */
+		//mySI1145.setI2CAddress(0x59);
 		
+		enableHighSignalVisRange(); // Gain divided by 14.5
+		enableHighSignalIrRange(); // Gain divided by 14.5
 		
-		//uint16_t vis_data;
-		//uint16_t ir_data;
-		//uint16_t ps1_data;
-		//uint16_t ps2_data;
-		//uint16_t ps3_data;
-		//uint16_t uv_data;
-//
-		//si1145_init(I2C_BUS, I2C_ADDR, SI1145_CONFIG_BIT_ALS |
-		//SI1145_CONFIG_BIT_UV |
-		//SI1145_CONFIG_BIT_MEAS_RATE_SLOW |
-		//SI1145_CONFIG_BIT_INDOORS);
-//
-		//si1145_measurement_auto(SI1145_MEASUREMENT_ALS);
-//
-		//
-		//si1145_get_vis_data(&vis_data);
-		//si1145_get_ir_data(&ir_data);
-		//si1145_get_ps_data(&ps1_data, &ps2_data, &ps3_data);
-		//si1145_get_uv_data(&uv_data) ;
-	//
-		//
-		//int ir_data_int = ir_data;
-		//char strbuf7[400];
-		//sprintf (strbuf7, "uv-si1145: %d \r\n", ir_data_int);
-		//usart_pstr(strbuf7);
-		//
-		////printf("VIS_DATA: 0x%x\n", vis_data);
-		////printf("IR_DATA: 0x%x\n", ir_data);
-		////printf("PS1_DATA: 0x%x\n", ps1_data);
-		////printf("PS2_DATA: 0x%x\n", ps2_data);
-		////printf("PS3_DATA: 0x%x\n", ps3_data);
-		////printf("UV_DATA: 0x%x\n", uv_data);
-		//
-		//si1145_close();
+		/* choices: PS_TYPE, ALS_TYPE, PSALS_TYPE, ALSUV_TYPE, PSALSUV_TYPE || FORCE, AUTO, PAUSE */
+		enableMeasurements(PSALSUV_TYPE, AUTO);
+	
+		//unsigned char failureCode = 0;
+		unsigned int amb_als = 0;
+		unsigned int amb_ir = 0;
+		/* uncomment if you want to perform PS measurements */
+		//unsigned int proximity = 0;
+		float uv = 0.0;
+		
+		amb_als = getAlsVisData();
+		amb_ir = getAlsIrData();
+
+		/* uncomment if you want to perform PS measurements */
+		// proximity = mySI1145.getPsData();
+
+		uv = getUvIndex();
+		
+		char strbuf7[400];
+		sprintf (strbuf7, "light: %d \r\n", amb_als);
+		usart_pstr(strbuf7);
+		
+		char strbuf8[400];
+		sprintf (strbuf8, "infra: %d \r\n", amb_ir);
+		usart_pstr(strbuf8);
+		
+		char strbuf9[400];
+		sprintf (strbuf9, "uv: %f \r\n", uv);
+		usart_pstr(strbuf9);
+		
+		_delay_ms(2000);
 	}
 	return (0);
 }
