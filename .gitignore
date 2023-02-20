@@ -7,3 +7,4 @@ arduino_secrets.h
 *.s#6
 *.atsuo
 Code/demos/ArduinoDS18B20/AVR/Plantemoji/Debug/
+Code/ATMega8A/Plantemoji/Debug/
