@@ -179,25 +179,25 @@ int ADCsingleREAD(uint8_t adctouse)
 }
 
 void handleSi1145Failure(unsigned char code){
-	char msg[400];
+	//char msg[400];
 	switch(code){
 		case SI1145_RESP_INVALID_SETTING:
-		sprintf (msg, "Invalid Setting %d \r\n", 0);
+		//sprintf (msg, "Invalid Setting %d \r\n", 0);
 		break;
 		case SI1145_RESP_PS1_ADC_OVERFLOW:
-		sprintf (msg, "PS ADC Overflow %d \r\n", 0);
+		//sprintf (msg, "PS ADC Overflow %d \r\n", 0);
 		break;
 		case SI1145_RESP_ALS_VIS_ADC_OVERFLOW:
-		sprintf (msg, "ALS VIS ADC Overflow %d \r\n", 0);
+		//sprintf (msg, "ALS VIS ADC Overflow %d \r\n", 0);
 		break;
 		case SI1145_RESP_ALS_IR_ADC_OVERFLOW:
-		sprintf (msg, "ALS IR Overflow %d \r\n", 0);
+		//sprintf (msg, "ALS IR Overflow %d \r\n", 0);
 		break;
 		case SI1145_RESP_AUX_ADC_OVERFLOW:
-		sprintf (msg, "AUX ADC Overflow %d \r\n", 0);
+		//sprintf (msg, "AUX ADC Overflow %d \r\n", 0);
 		break;
 		default:
-		sprintf (msg, "Unknown Failure %d \r\n", 0);
+		//sprintf (msg, "Unknown Failure %d \r\n", 0);
 		break;
 	}
 	//usart_pstr(msg); //disable printing errors for now
