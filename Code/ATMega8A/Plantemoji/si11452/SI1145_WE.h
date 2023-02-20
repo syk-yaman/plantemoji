@@ -14,7 +14,6 @@
  *
  * 
  ******************************************************************************/
-
 #include "../i2c/stdutils.h"
 #include <util/delay.h>
 
@@ -170,6 +169,5 @@ uint16_t getRegister16bit(uint8_t registerAddr);
 
 void setRegister(uint8_t registerAddr, uint8_t data);
 void setRegister16bit(uint8_t registerAddr, uint16_t data);
-
 
 

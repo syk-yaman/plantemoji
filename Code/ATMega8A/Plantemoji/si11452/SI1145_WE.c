@@ -17,7 +17,7 @@
 #include "../i2c/i2c.h"
 
 void SI1145_WE_init(){ 
-	setI2CAddress(SI1145_ADDRESS);
+	i2cAddress = 0x60;
     /* sets default parameters */
         
     resetSI1145();
@@ -70,9 +70,9 @@ void resetSI1145(){
 }
 
 void setI2CAddress(uint8_t addr){
+	i2cAddress = addr;
     setParameter(SI1145_PARA_I2C_ADDR, addr); _delay_ms(10);
     setRegister(SI1145_REG_COMMAND, SI1145_BUSADDR); _delay_ms(10);
-    i2cAddress = addr;
 }
 
 void enableMeasurements(SI1145MeasureType t, SI1145MeasureMode m){
@@ -284,13 +284,15 @@ uint8_t getRegister(uint8_t registerAddr)
     uint8_t data;
 	
 	I2C_Start();
-	I2C_Write(i2cAddress);
-	I2C_Write(registerAddr);
-
+	I2C_Write(0xC1);
+	I2C_Write(registerAddr); /////
+	
+	//I2C_Write(i2cAddress);
     //_wire->endTransmission(false); 
     //_wire->requestFrom(i2cAddress , static_cast<uint8_t>(1));
-    data = I2C_Read(1); 
-
+    data = I2C_Read(0); 
+	I2C_Stop();
+	
     return data;
 }
 
@@ -301,27 +303,33 @@ uint16_t getRegister16bit(uint8_t registerAddr)
     uint16_t data;
 
 	I2C_Start();
-	I2C_Write(i2cAddress);
+	I2C_Write(0xC0);
 	I2C_Write(registerAddr);
-	
+	//I2C_Stop(); 
     
     //_wire->endTransmission(false); 
 	
 	
     //_wire->requestFrom(i2cAddress, static_cast<uint8_t>(2));
-	
+	I2C_Start();
+	I2C_Write(0xC1);
     data_low = I2C_Read(1);
-    data_high = I2C_Read(1); 
+    data_high = I2C_Read(0); 
     data = (data_high << 8)|data_low;
-
+	I2C_Stop();
+	
     return data;
 }
 
 void setRegister(uint8_t registerAddr, uint8_t data)
 {
 	I2C_Start();  
-	I2C_Write(i2cAddress);
+	I2C_Write(0xC0);
 	I2C_Write(registerAddr);
+	//I2C_Stop();
+	
+	//I2C_Start();
+	//I2C_Write(i2cAddress);
 	I2C_Write(data);
 	I2C_Stop(); 
 }
@@ -329,8 +337,12 @@ void setRegister(uint8_t registerAddr, uint8_t data)
 void setRegister16bit(uint8_t registerAddr, uint16_t data)
 {
     I2C_Start();
-    I2C_Write(i2cAddress);
+    I2C_Write(0xC0);
     I2C_Write(registerAddr);
+	//I2C_Stop(); 
+	
+	//I2C_Start();
+	//I2C_Write(i2cAddress);
     uint8_t temp = data & 0xff;
     I2C_Write(temp); 
     temp = (data >> 8) & 0xff;

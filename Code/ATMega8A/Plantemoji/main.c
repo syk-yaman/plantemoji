@@ -28,6 +28,7 @@ void initPorts();
 #define FOSC 8000000// Clock Speed
 #define MYUBRR FOSC/16/BAUD-1
 
+
 int main()
 {
 	initPorts();
@@ -43,79 +44,41 @@ int main()
 	double temperature_dht22[1];
 	double humidity_dht22[1];
 	
-	DHT_Setup();
+	char strbuf0[400];
+	sprintf (strbuf0, "hw0! %d \r\n", 0);
+	usart_pstr(strbuf0);
 	
-
+	//DHT_Setup();
+	SI1145_WE_init();
+	
+	setI2CAddress(0x60);
+	/* in case you want to change the I2C Address */
+	//mySI1145.setI2CAddress(0x59);
+	
+	enableHighSignalVisRange(); // Gain divided by 14.5
+	enableHighSignalIrRange(); // Gain divided by 14.5
+	
+	/* choices: PS_TYPE, ALS_TYPE, PSALS_TYPE, ALSUV_TYPE, PSALSUV_TYPE || FORCE, AUTO, PAUSE */
+	enableMeasurements(PSALSUV_TYPE, AUTO);
+	
 	while(1)
 	{
 		
-		/************************************************************************/
-		/* DS18B20 Reading                                                      */
-		/************************************************************************/	
-	
-		//Start conversion (without ROM matching) 1 << (0) means pin.0, 1 << (5) means pin.5
-		ds18b20convert( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL );
-
-		//Delay (sensor needs time to perform conversion)
-		_delay_ms( 1000 );
-
-		//Read temperature (without ROM matching)
-		ds18b20read( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL, &temperature_ds18b20 );
-
-		char strbuf3[400];
-		sprintf (strbuf3, "temp-ds18: %d \r\n", temperature_ds18b20);
-		usart_pstr(strbuf3);
+		char strbuf1[400];
+		sprintf (strbuf1, "hi! %d \r\n", 0);
+		usart_pstr(strbuf1);
 		
-		/************************************************************************/
-		/* DHT22 Reading                                                        */
-		/************************************************************************/
-		
-		//Read from sensor
-		enum DHT_Status_t dhtStatus = DHT_Read(temperature_dht22, humidity_dht22);
-		
-		char strbuf4[400];
-		char strbuf5[400];
-		char strbuf6[400];
-				
-		//Check status
-		switch (dhtStatus)
-		{
-			case (DHT_Ok):
-				sprintf (strbuf4, "temp-dht22: %f \r\n", temperature_dht22[0]);
-				usart_pstr(strbuf4);
-				
-				sprintf (strbuf5, "humidity-dht22: %f \r\n", humidity_dht22[0]);
-				usart_pstr(strbuf5);
-		
-			break;
-			case (DHT_Error_Checksum):
-				sprintf (strbuf6, "dht22-error: %d \r\n", 0);
-				usart_pstr(strbuf6);
-			break;
-			case (DHT_Error_Timeout):
-				//Do something else
-			break;
-		}
-		
-		//Sensor needs 1-2s to stabilize its readings
-		_delay_ms(1000);
 		
 		/************************************************************************/
 		/* Si1145 Reading                                                       */
 		/************************************************************************/
 		 
-		SI1145_WE_init();
+		
 
-		/* in case you want to change the I2C Address */
-		//mySI1145.setI2CAddress(0x59);
 		
-		enableHighSignalVisRange(); // Gain divided by 14.5
-		enableHighSignalIrRange(); // Gain divided by 14.5
 		
-		/* choices: PS_TYPE, ALS_TYPE, PSALS_TYPE, ALSUV_TYPE, PSALSUV_TYPE || FORCE, AUTO, PAUSE */
-		enableMeasurements(PSALSUV_TYPE, AUTO);
-	
-		//unsigned char failureCode = 0;
+	 
+		unsigned char failureCode = 0;
 		unsigned int amb_als = 0;
 		unsigned int amb_ir = 0;
 		/* uncomment if you want to perform PS measurements */
@@ -124,10 +87,6 @@ int main()
 		
 		amb_als = getAlsVisData();
 		amb_ir = getAlsIrData();
-
-		/* uncomment if you want to perform PS measurements */
-		// proximity = mySI1145.getPsData();
-
 		uv = getUvIndex();
 		
 		char strbuf7[400];
@@ -142,18 +101,51 @@ int main()
 		sprintf (strbuf9, "uv: %f \r\n", uv);
 		usart_pstr(strbuf9);
 		
-		_delay_ms(2000);
+		failureCode = getFailureMode();  // reads the response register
+		if((failureCode&128)){  // if bit 7 is set in response register, there is a failure
+			handleFailure(failureCode);
+		}
+		
+		/* uncomment if you want to perform PS measurements */
+		// proximity = mySI1145.getPsData();
+		
+		_delay_ms(1000);
 	}
 	return (0);
 }
 
-
+void handleFailure(unsigned char code){
+	char msg[400];
+	switch(code){
+		case SI1145_RESP_INVALID_SETTING:
+		sprintf (msg, "Invalid Setting %d \r\n", 0);
+		break;
+		case SI1145_RESP_PS1_ADC_OVERFLOW:
+		sprintf (msg, "PS ADC Overflow %d \r\n", 0);
+		break;
+		case SI1145_RESP_ALS_VIS_ADC_OVERFLOW:
+		sprintf (msg, "ALS VIS ADC Overflow %d \r\n", 0);
+		break;
+		case SI1145_RESP_ALS_IR_ADC_OVERFLOW:
+		sprintf (msg, "ALS IR Overflow %d \r\n", 0);
+		break;
+		case SI1145_RESP_AUX_ADC_OVERFLOW:
+		sprintf (msg, "AUX ADC Overflow %d \r\n", 0);
+		break;
+		default:
+		sprintf (msg, "Unknown Failure %d \r\n", 0);
+		break;
+	}
+	usart_pstr(msg);
+	
+	clearFailure();
+}
 
 void initPorts(){
 	DDRB = 0x00; // Set PORT B to input
 	
-	DDRC = DDRC & 0b11101100; // Set PORT C to input
-	PORTC = PORTC | 0b00010000; //enable pull-ups
+	//DDRC = DDRC & 0b11101100; // Set PORT C to input
+	//PORTC = PORTC | 0b00010000; //enable pull-ups
 }
 
 

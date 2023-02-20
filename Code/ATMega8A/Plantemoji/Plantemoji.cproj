@@ -166,6 +166,12 @@
     <Compile Include="ds18b20\romsearch.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="i2c\delay.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c\delay.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="i2c\i2c.c">
       <SubType>compile</SubType>
     </Compile>
