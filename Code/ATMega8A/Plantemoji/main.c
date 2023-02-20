@@ -59,8 +59,11 @@ int main()
 	
 	enableMeasurements(PSALSUV_TYPE, AUTO); /* choices: PS_TYPE, ALS_TYPE, PSALS_TYPE, ALSUV_TYPE, PSALSUV_TYPE || FORCE, AUTO, PAUSE */
 	
+	
 	while(1)
 	{
+		char strbuf[400];
+		
 		/************************************************************************/
 		/* DS18B20 Reading                                                      */
 		/************************************************************************/
@@ -74,9 +77,11 @@ int main()
 		//Read temperature (without ROM matching)
 		ds18b20read( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL, &temperature_ds18b20 );
 
-		char strbuf1[400];
-		sprintf (strbuf1, "temp-ds18: %d \r\n", temperature_ds18b20);
-		usart_pstr(strbuf1);
+		
+		sprintf (strbuf, "1-ds18-temp: %d \r\n", temperature_ds18b20);
+		usart_pstr(strbuf);
+		
+		_delay_ms(2000);
 		
 		/************************************************************************/
 		/* DHT22 Reading                                                        */
@@ -85,23 +90,19 @@ int main()
 		//Read from sensor
 		enum DHT_Status_t dhtStatus = DHT_Read(temperature_dht22, humidity_dht22);
 		
-		char strbuf2[400];
-		char strbuf3[400];
-		
 		//Check status
 		switch (dhtStatus)
 		{
 			case (DHT_Ok):
-			sprintf (strbuf2, "temp-dht22: %f \r\n", temperature_dht22[0]);
-			usart_pstr(strbuf2);
+			sprintf (strbuf, "2-dht22-temp: %f \r\n", temperature_dht22[0]);
+			usart_pstr(strbuf);
 			
-			sprintf (strbuf3, "humidity-dht22: %f \r\n", humidity_dht22[0]);
-			usart_pstr(strbuf3);
+			sprintf (strbuf, "2-dht22-humidity: %f \r\n", humidity_dht22[0]);
+			usart_pstr(strbuf);
 			
 			break;
 			case (DHT_Error_Checksum):
-			//sprintf (strbuf6, "dht22-error: %d \r\n", 0);
-			//usart_pstr(strbuf6);
+			//Do something
 			break;
 			case (DHT_Error_Timeout):
 			//Do something else
@@ -109,7 +110,17 @@ int main()
 		}
 		
 		//Sensor needs 1-2s to stabilize its readings
-		_delay_ms(1000);
+		_delay_ms(2000);
+		
+		/************************************************************************/
+		/* HW-390 Reading                                                       */
+		/************************************************************************/
+		int adcHW390 = ADCsingleREAD(0);
+		//float voltageHW390 = (adcHW390 * V_REF)/1024;
+		
+		sprintf (strbuf, "3-HW390-soil: %d \r\n", adcHW390);
+		usart_pstr(strbuf);
+		_delay_ms(2000);
 		
 		/************************************************************************/
 		/* Si1145 Reading                                                       */
@@ -123,35 +134,22 @@ int main()
 		amb_ir = getAlsIrData();
 		uv = getUvIndex();
 		
-		char strbuf4[400];
-		sprintf (strbuf4, "light: %d \r\n", amb_als);
-		usart_pstr(strbuf4);
+		sprintf (strbuf, "4-Si1145-light: %d \r\n", amb_als);
+		usart_pstr(strbuf);
 		
-		char strbuf5[400];
-		sprintf (strbuf5, "infra: %d \r\n", amb_ir);
-		usart_pstr(strbuf5);
+		sprintf (strbuf, "4-Si1145-infra: %d \r\n", amb_ir);
+		usart_pstr(strbuf);
 		
-		char strbuf6[400];
-		sprintf (strbuf6, "uv: %f \r\n", uv);
-		usart_pstr(strbuf6);
+		sprintf (strbuf, "4-Si1145-uv: %f \r\n", uv);
+		usart_pstr(strbuf);
 		
 		failureCode = getFailureMode();  // reads the response register
 		if((failureCode&128)){  // if bit 7 is set in response register, there is a failure
 			handleSi1145Failure(failureCode);
 		}
 		
-		_delay_ms(1000);
-
-		/************************************************************************/
-		/* HW-390 Reading                                                       */
-		/************************************************************************/
-		int adcHW390 = ADCsingleREAD(0);
-		float voltageHW390 = (adcHW390 * V_REF)/1024;
-		
-		char strbuf7[400];
-		sprintf (strbuf7, "soil-humidity: %f \r\n", voltageHW390);
-		usart_pstr(strbuf7);
-		_delay_ms(1000);
+		_delay_ms(2000);
+	
 	}
 	return (0);
 }
@@ -208,7 +206,7 @@ void handleSi1145Failure(unsigned char code){
 void initPorts(){
 	DDRB = 0x00; // Set PORT B to input
 	
-	DDRC = DDRC & 0x00; // Set PORT C to input
+	//DDRC = DDRC & 0b11101100; // Set PORT C to input
 	//PORTC = PORTC | 0b00010000; //enable pull-ups
 }
 
