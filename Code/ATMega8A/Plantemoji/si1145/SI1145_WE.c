@@ -279,18 +279,19 @@ uint8_t getParameter(uint8_t param){
 }
 
 
+/**********************************************************/
+/* This section is reimplemented by Yaman from scratch	  */
+/* according to the SI1145 datasheet					  */
+/**********************************************************/
+
 uint8_t getRegister(uint8_t registerAddr)
 {
     uint8_t data;
 	
 	I2C_Start();
-	I2C_Write(0xC1);
-	I2C_Write(registerAddr); /////
-	
-	//I2C_Write(i2cAddress);
-    //_wire->endTransmission(false); 
-    //_wire->requestFrom(i2cAddress , static_cast<uint8_t>(1));
-    data = I2C_Read(0); 
+	I2C_Write(i2cAddress<<1 | 0b00000001); //because the address is only 7bits, shift left and set the read bit (1)
+	I2C_Write(registerAddr);
+    data = I2C_Read(0); //no acknowledgment
 	I2C_Stop();
 	
     return data;
@@ -303,19 +304,14 @@ uint16_t getRegister16bit(uint8_t registerAddr)
     uint16_t data;
 
 	I2C_Start();
-	I2C_Write(0xC0);
+	I2C_Write(i2cAddress<<1); //because the address is only 7bits, shift left thus the write bit is (0) by default
 	I2C_Write(registerAddr);
-	//I2C_Stop(); 
-    
-    //_wire->endTransmission(false); 
 	
-	
-    //_wire->requestFrom(i2cAddress, static_cast<uint8_t>(2));
-	I2C_Start();
-	I2C_Write(0xC1);
-    data_low = I2C_Read(1);
-    data_high = I2C_Read(0); 
-    data = (data_high << 8)|data_low;
+	I2C_Start(); //repeated start
+	I2C_Write(i2cAddress<<1 | 0b00000001); //because the address is only 7bits, shift left and set the read bit (1)
+    data_low = I2C_Read(1); //with acknowledgment
+    data_high = I2C_Read(0); //no acknowledgment
+    data = (data_high << 8)|data_low; //combining the two bytes
 	I2C_Stop();
 	
     return data;
@@ -324,12 +320,8 @@ uint16_t getRegister16bit(uint8_t registerAddr)
 void setRegister(uint8_t registerAddr, uint8_t data)
 {
 	I2C_Start();  
-	I2C_Write(0xC0);
+	I2C_Write(i2cAddress<<1); //because the address is only 7bits, shift left thus the write bit is (0) by default
 	I2C_Write(registerAddr);
-	//I2C_Stop();
-	
-	//I2C_Start();
-	//I2C_Write(i2cAddress);
 	I2C_Write(data);
 	I2C_Stop(); 
 }
@@ -337,15 +329,11 @@ void setRegister(uint8_t registerAddr, uint8_t data)
 void setRegister16bit(uint8_t registerAddr, uint16_t data)
 {
     I2C_Start();
-    I2C_Write(0xC0);
+    I2C_Write(i2cAddress<<1); //because the address is only 7bits, shift left thus the write bit is (0) by default
     I2C_Write(registerAddr);
-	//I2C_Stop(); 
-	
-	//I2C_Start();
-	//I2C_Write(i2cAddress);
-    uint8_t temp = data & 0xff;
+    uint8_t temp = data & 0xff; //mask the first half of the data, to be transmitted byte by byte
     I2C_Write(temp); 
-    temp = (data >> 8) & 0xff;
+    temp = (data >> 8) & 0xff; //transmit the second byte
     I2C_Write(temp); 
     I2C_Stop(); 
 }

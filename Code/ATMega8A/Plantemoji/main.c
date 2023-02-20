@@ -3,11 +3,7 @@
 #include <stddef.h>
 #include "ds18b20/ds18b20.h"
 #include "dht22/DHT.h"
-#include "si11452/SI1145_WE.h"
-//#include "i2c/i2c.h"
-
-//static const char *I2C_BUS="/dev/i2c-1";
-//static const int I2C_ADDR = 0x00;
+#include "si1145/SI1145_WE.h"
 
 //Macros
 #define bit_is_low(sfr,bit)(!(_SFR_BYTE(sfr) & _BV(bit)))
@@ -50,10 +46,7 @@ int main()
 	
 	//DHT_Setup();
 	SI1145_WE_init();
-	
 	setI2CAddress(0x60);
-	/* in case you want to change the I2C Address */
-	//mySI1145.setI2CAddress(0x59);
 	
 	enableHighSignalVisRange(); // Gain divided by 14.5
 	enableHighSignalIrRange(); // Gain divided by 14.5
@@ -72,17 +65,10 @@ int main()
 		/************************************************************************/
 		/* Si1145 Reading                                                       */
 		/************************************************************************/
-		 
 		
-
-		
-		
-	 
 		unsigned char failureCode = 0;
 		unsigned int amb_als = 0;
 		unsigned int amb_ir = 0;
-		/* uncomment if you want to perform PS measurements */
-		//unsigned int proximity = 0;
 		float uv = 0.0;
 		
 		amb_als = getAlsVisData();
@@ -105,9 +91,6 @@ int main()
 		if((failureCode&128)){  // if bit 7 is set in response register, there is a failure
 			handleFailure(failureCode);
 		}
-		
-		/* uncomment if you want to perform PS measurements */
-		// proximity = mySI1145.getPsData();
 		
 		_delay_ms(1000);
 	}
@@ -136,7 +119,7 @@ void handleFailure(unsigned char code){
 		sprintf (msg, "Unknown Failure %d \r\n", 0);
 		break;
 	}
-	usart_pstr(msg);
+	//usart_pstr(msg);
 	
 	clearFailure();
 }

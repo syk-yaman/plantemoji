@@ -64,8 +64,6 @@ void I2C_Init()
 {
     TWSR=0x00; //set presca1er bits to zero
     TWBR=0x46; //SCL frequency is 50K for 16Mhz
-	//TWBR=0b00001000; //SCL frequency is 50K for 16Mhz
-	//TWBR=0b00100000;
     TWCR=0x04; //enab1e TWI module
 }
 
@@ -152,7 +150,6 @@ void I2C_Write(uint8_t v_i2cData_u8)
     TWDR = v_i2cData_u8 ;
     TWCR = ((1<< TWINT) | (1<<TWEN));
     while (!(TWCR & (1 <<TWINT)));
-	//while((TWSR & 0xF8) != 0x28); // Check for the acknoledgement
 }
 
 
