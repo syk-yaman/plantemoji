@@ -16,8 +16,8 @@
 #include "SI1145_WE.h"
 #include "../i2c/i2c.h"
 
-void SI1145_WE_init(){ 
-	i2cAddress = 0x60;
+void SI1145_WE_init(uint8_t address){ 
+	i2cAddress = address;
     /* sets default parameters */
         
     resetSI1145();
@@ -60,6 +60,8 @@ void SI1145_WE_init(){
         No value > 7 (factor 128) shall be taken */
     setAlsIrAdcGain(0);
     disableHighSignalIrRange();
+	
+	setI2CAddress(address);
 }
 
 void resetSI1145(){

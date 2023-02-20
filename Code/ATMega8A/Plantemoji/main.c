@@ -45,8 +45,7 @@ int main()
 	usart_pstr(strbuf0);
 	
 	//DHT_Setup();
-	SI1145_WE_init();
-	setI2CAddress(0x60);
+	SI1145_WE_init(0x60);
 	
 	enableHighSignalVisRange(); // Gain divided by 14.5
 	enableHighSignalIrRange(); // Gain divided by 14.5

@@ -115,7 +115,7 @@ typedef enum {
 } SI1145IntType;
 
 
-void SI1145_WE_init();
+void SI1145_WE_init(uint8_t address);
 void resetSI1145();
 void setI2CAddress(uint8_t);
 void enableMeasurements(SI1145MeasureType t, SI1145MeasureMode m);
