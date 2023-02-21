@@ -44,9 +44,9 @@ int main()
 	/************************************************************************/
 	/* DHT Initialisation                                                   */
 	/************************************************************************/
-	int temperature_ds18b20;
-	double temperature_dht22[1];
-	double humidity_dht22[1];
+	int soilTemperature_ds18b20;
+	double airTemperature_dht22[1];
+	double airHumidity_dht22[1];
 	DHT_Setup();
 	
 	/************************************************************************/
@@ -74,7 +74,7 @@ int main()
 		_delay_ms(1000);
 
 		//Read temperature (without ROM matching)
-		ds18b20read( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL, &temperature_ds18b20 );
+		ds18b20read( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL, &soilTemperature_ds18b20 );
 
 		_delay_ms(2000);
 		
@@ -83,7 +83,7 @@ int main()
 		/************************************************************************/
 		
 		//Read from sensor
-		enum DHT_Status_t dhtStatus = DHT_Read(temperature_dht22, humidity_dht22);
+		enum DHT_Status_t dhtStatus = DHT_Read(airTemperature_dht22, airHumidity_dht22);
 		
 		//Check status
 		switch (dhtStatus)
@@ -105,7 +105,7 @@ int main()
 		/************************************************************************/
 		/* HW-390 Reading                                                       */
 		/************************************************************************/
-		int adcHW390 = ADCsingleREAD(0);
+		int soilHumidity_HW390 = ADCsingleREAD(0);
 		//float voltageHW390 = (adcHW390 * V_REF)/1024;
 		
 		_delay_ms(2000);
@@ -137,9 +137,9 @@ int main()
 		/*                                                                      */
 		/*					Sensor values order:                                */
 		/*                                                                      */
-		/*					1. ds18b20: temperature                             */
+		/*					1. dht22: air temperature                           */
 		/*					2. dht22: air humidity                              */
-		/*					3. dht22: temperature                               */
+		/*					3. ds18b20: soil temperature                        */
 		/*					4. HW390: soil humidity                             */
 		/*					5. Si1145: light                                    */
 		/*					6. Si1145: infrared                                 */
@@ -148,10 +148,14 @@ int main()
 		/************************************************************************/
 		
 		char strbuf[400];
-		sprintf (strbuf, "%d,%f,%f,%d,%d,%d,%f\r\n", 
-		temperature_ds18b20, humidity_dht22[0],
-		temperature_dht22[0], adcHW390, amb_als,
-		amb_ir, uv);
+		sprintf (strbuf, "%f,%f,%d,%d,%d,%d,%f\r\n",
+		airTemperature_dht22[0], 
+		airHumidity_dht22[0],
+		soilTemperature_ds18b20, 
+		soilHumidity_HW390,
+		amb_als,
+		amb_ir,
+		uv);
 		usart_pstr(strbuf);
 
 	}
