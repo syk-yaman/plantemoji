@@ -62,7 +62,6 @@ int main()
 	
 	while(1)
 	{
-		char strbuf[400];
 		
 		/************************************************************************/
 		/* DS18B20 Reading                                                      */
@@ -72,15 +71,11 @@ int main()
 		ds18b20convert( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL );
 
 		//Delay (sensor needs time to perform conversion)
-		_delay_ms( 1000 );
+		_delay_ms(1000);
 
 		//Read temperature (without ROM matching)
 		ds18b20read( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL, &temperature_ds18b20 );
 
-		
-		sprintf (strbuf, "1-ds18-temp: %d \r\n", temperature_ds18b20);
-		usart_pstr(strbuf);
-		
 		_delay_ms(2000);
 		
 		/************************************************************************/
@@ -94,12 +89,7 @@ int main()
 		switch (dhtStatus)
 		{
 			case (DHT_Ok):
-			sprintf (strbuf, "2-dht22-temp: %f \r\n", temperature_dht22[0]);
-			usart_pstr(strbuf);
-			
-			sprintf (strbuf, "2-dht22-humidity: %f \r\n", humidity_dht22[0]);
-			usart_pstr(strbuf);
-			
+			//Do something
 			break;
 			case (DHT_Error_Checksum):
 			//Do something
@@ -118,8 +108,6 @@ int main()
 		int adcHW390 = ADCsingleREAD(0);
 		//float voltageHW390 = (adcHW390 * V_REF)/1024;
 		
-		sprintf (strbuf, "3-HW390-soil: %d \r\n", adcHW390);
-		usart_pstr(strbuf);
 		_delay_ms(2000);
 		
 		/************************************************************************/
@@ -134,22 +122,37 @@ int main()
 		amb_ir = getAlsIrData();
 		uv = getUvIndex();
 		
-		sprintf (strbuf, "4-Si1145-light: %d \r\n", amb_als);
-		usart_pstr(strbuf);
-		
-		sprintf (strbuf, "4-Si1145-infra: %d \r\n", amb_ir);
-		usart_pstr(strbuf);
-		
-		sprintf (strbuf, "4-Si1145-uv: %f \r\n", uv);
-		usart_pstr(strbuf);
-		
 		failureCode = getFailureMode();  // reads the response register
 		if((failureCode&128)){  // if bit 7 is set in response register, there is a failure
 			handleSi1145Failure(failureCode);
 		}
 		
 		_delay_ms(2000);
-	
+
+		/************************************************************************/
+		/* Combine sensor values then send them over serial to Huzzah			*/
+		/************************************************************************/
+		
+		/************************************************************************/
+		/*																		*/
+		/*					Sendsor values order:								*/
+		/*					1. ds18b20: temperature								*/
+		/*					2. dht22: air humidity								*/
+		/*					3. dht22: temperature								*/
+		/*					4. HW390: soil humidity								*/
+		/*					5. Si1145: light									*/
+		/*					6. Si1145: infrared									*/
+		/*					7. Si1145: UV										*/
+		/*																		*/
+		/************************************************************************/
+		
+		char strbuf[400];
+		sprintf (strbuf, "%d,%f,%f,%d,%d,%d,%f\r\n", 
+		temperature_ds18b20, humidity_dht22[0],
+		temperature_dht22[0], adcHW390, amb_als,
+		amb_ir, uv);
+		usart_pstr(strbuf);
+
 	}
 	return (0);
 }
