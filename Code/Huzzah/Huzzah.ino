@@ -25,7 +25,7 @@ const char* mqtt_server = "mqtt.cetools.org";
 //Internal fields
 WiFiClient espClient;
 PubSubClient client(espClient);
-char msg[50];
+
 int currentMood = -1;
 Timezone GB;
 
@@ -149,25 +149,26 @@ void sendMQTT(
   }
   client.loop();
 
-  dht22_airTemperature.toCharArray(msg,dht22_airTemperature.length());
+  char msg[50];
+  dht22_airTemperature.toCharArray(msg,dht22_airTemperature.length()+1);
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/airTemperature", msg);
 
-  dht22_airHumidity.toCharArray(msg,dht22_airHumidity.length());
+  dht22_airHumidity.toCharArray(msg,dht22_airHumidity.length()+1);
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/airHumidity", msg);
 
-  ds18b20_soilTemperature.toCharArray(msg,ds18b20_soilTemperature.length());
+  ds18b20_soilTemperature.toCharArray(msg,ds18b20_soilTemperature.length()+1);
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/soilTemperature", msg);
   
-  hw390_soilHumidity.toCharArray(msg,hw390_soilHumidity.length());
+  hw390_soilHumidity.toCharArray(msg,hw390_soilHumidity.length()+1);
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/soilHumidity", msg);
 
-  si1145_light.toCharArray(msg,si1145_light.length());
+  si1145_light.toCharArray(msg,si1145_light.length()+1);
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/light", msg);
 
-  si1145_infrared.toCharArray(msg,si1145_infrared.length());
+  si1145_infrared.toCharArray(msg,si1145_infrared.length()+1);
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/infrared", msg);
 
-  si1145_uv.toCharArray(msg,si1145_uv.length());
+  si1145_uv.toCharArray(msg,si1145_uv.length()+1);
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/uv", msg);
   
   //sprintf(msg, "%05d", mood);
