@@ -31,7 +31,7 @@ Timezone GB;
 
 void setup() {
   initialiseLCDScreen();
-  
+  drawMoodOnScreen(1);
   Serial.println("Hi");
 
   //Connect to an SSID and print local IP address, taken from CASA plant monitoring class
@@ -59,6 +59,7 @@ void setup() {
   
   pinMode(BUILTIN_LED, OUTPUT);     
   digitalWrite(BUILTIN_LED, HIGH);  
+  drawMoodOnScreen(1);
 }
 
 
@@ -69,22 +70,49 @@ void loop() {
   String sensorDataReceived = "";
   sensorDataReceived = Serial.readString();
   if(sensorDataReceived != ""){
-      String soilMoistureReading = splitString(sensorDataReceived,';',0);
-      String temperatureReading = splitString(sensorDataReceived,';',1);
-      String humidityReading = splitString(sensorDataReceived,';',2);
-      String lightReading = splitString(sensorDataReceived,';',3);
-      String nailSoilMoistureReading = splitString(sensorDataReceived,';',4);
+    
+    /************************************************************************/
+    /*                                                                      */
+    /*          Sensor values order:                                        */
+    /*                                                                      */
+    /*          1. dht22: air temperature                                   */
+    /*          2. dht22: air humidity                                      */
+    /*          3. ds18b20: soil temperature                                */
+    /*          4. HW390: soil humidity                                     */
+    /*          5. Si1145: light                                            */
+    /*          6. Si1145: infrared                                         */
+    /*          7. Si1145: UV                                               */
+    /*                                                                      */
+    /************************************************************************/
+    
+      String dht22_airTemperature = splitString(sensorDataReceived,',',0);
+      String dht22_airHumidity = splitString(sensorDataReceived,',',1);
+      String ds18b20_soilTemperature = splitString(sensorDataReceived,',',2);
+      String hw390_soilHumidity = splitString(sensorDataReceived,',',3);
+      String si1145_light = splitString(sensorDataReceived,',',4);
+      String si1145_infrared = splitString(sensorDataReceived,',',5);
+      String si1145_uv = splitString(sensorDataReceived,',',6);
 
-      Serial.println("------ Arduino said: -------");
-      Serial.println("soilMoistureReading: " + soilMoistureReading);
-      Serial.println("temperatureReading: " + temperatureReading);
-      Serial.println("humidityReading: " + humidityReading);
-      Serial.println("lightReading: " + lightReading);
-      Serial.println("nailSoilMoistureReading: " + nailSoilMoistureReading);
-
-      int mood = resolveMood(soilMoistureReading.toFloat(), humidityReading.toFloat());
-      sendMQTT(soilMoistureReading, temperatureReading, humidityReading, lightReading, nailSoilMoistureReading, mood);
-      drawMoodOnScreen(mood);
+      Serial.println("------ ATMega8A said: -------");
+      Serial.println("dht22_airTemperature: " + dht22_airTemperature);
+      Serial.println("dht22_airHumidity: " + dht22_airHumidity);
+      Serial.println("ds18b20_soilTemperature: " + ds18b20_soilTemperature);
+      Serial.println("hw390_soilHumidity: " + hw390_soilHumidity);
+      Serial.println("si1145_light: " + si1145_light);
+      Serial.println("si1145_infrared: " + si1145_infrared);
+      Serial.println("si1145_uv: " + si1145_uv);
+      
+      //int mood = resolveMood(soilMoistureReading.toFloat(), humidityReading.toFloat());
+      sendMQTT(
+        dht22_airTemperature,
+        dht22_airHumidity, 
+        ds18b20_soilTemperature,  
+        hw390_soilHumidity, 
+        si1145_light, 
+        si1145_infrared, 
+        si1145_uv);
+        
+      //drawMoodOnScreen(mood);
     }
   
   }
@@ -107,28 +135,43 @@ int resolveMood(float soilMoistureReading, float humidityReading){
   }
 }
 
-void sendMQTT(String soilMoistureReading, String temperatureReading,
-              String humidityReading, String lightReading, String nailSoilMoistureReading, int mood) {
+void sendMQTT(
+        String dht22_airTemperature,
+        String dht22_airHumidity, 
+        String ds18b20_soilTemperature,  
+        String hw390_soilHumidity, 
+        String si1145_light, 
+        String si1145_infrared, 
+        String si1145_uv) {
 
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
 
-  soilMoistureReading.toCharArray(msg,soilMoistureReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/moistureCapacitive", msg);
+  dht22_airTemperature.toCharArray(msg,dht22_airTemperature.length());
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/airTemperature", msg);
 
-  temperatureReading.toCharArray(msg,temperatureReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/temperature", msg);
+  dht22_airHumidity.toCharArray(msg,dht22_airHumidity.length());
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/airHumidity", msg);
 
-  humidityReading.toCharArray(msg,humidityReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/humidity", msg);
+  ds18b20_soilTemperature.toCharArray(msg,ds18b20_soilTemperature.length());
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/soilTemperature", msg);
   
-  nailSoilMoistureReading.toCharArray(msg,nailSoilMoistureReading.length());
-  client.publish("student/CASA0014/plant/ucfnmyr/moisture", msg);
+  hw390_soilHumidity.toCharArray(msg,hw390_soilHumidity.length());
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/soilHumidity", msg);
 
-  sprintf(msg, "%05d", mood);
-  client.publish("student/CASA0014/plant/ucfnmyr/mood", msg);
+  si1145_light.toCharArray(msg,si1145_light.length());
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/light", msg);
+
+  si1145_infrared.toCharArray(msg,si1145_infrared.length());
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/infrared", msg);
+
+  si1145_uv.toCharArray(msg,si1145_uv.length());
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/uv", msg);
+  
+  //sprintf(msg, "%05d", mood);
+  //client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/mood", msg);
 }
 
 //Preparing & clearing LCD screen
