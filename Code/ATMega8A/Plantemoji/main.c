@@ -134,16 +134,17 @@ int main()
 		/************************************************************************/
 		
 		/************************************************************************/
-		/*																		*/
-		/*					Sendsor values order:								*/
-		/*					1. ds18b20: temperature								*/
-		/*					2. dht22: air humidity								*/
-		/*					3. dht22: temperature								*/
-		/*					4. HW390: soil humidity								*/
-		/*					5. Si1145: light									*/
-		/*					6. Si1145: infrared									*/
-		/*					7. Si1145: UV										*/
-		/*																		*/
+		/*                                                                      */
+		/*					Sensor values order:                                */
+		/*                                                                      */
+		/*					1. ds18b20: temperature                             */
+		/*					2. dht22: air humidity                              */
+		/*					3. dht22: temperature                               */
+		/*					4. HW390: soil humidity                             */
+		/*					5. Si1145: light                                    */
+		/*					6. Si1145: infrared                                 */
+		/*					7. Si1145: UV                                       */
+		/*                                                                      */
 		/************************************************************************/
 		
 		char strbuf[400];
