@@ -209,9 +209,6 @@ void handleSi1145Failure(unsigned char code){
 
 void initPorts(){
 	DDRB = 0x00; // Set PORT B to input
-	
-	//DDRC = DDRC & 0b11101100; // Set PORT C to input
-	//PORTC = PORTC | 0b00010000; //enable pull-ups
 }
 
 
