@@ -107,7 +107,7 @@ int main()
 		/* HW-390 Reading                                                       */
 		/************************************************************************/
 		int soilHumidityDigital = ADCsingleREAD(0);
-		double soilHumidity_HW390 = soilHumidityDigital/1024.0;
+		double soilHumidity_HW390 = 100*soilHumidityDigital/1024.0;
 				
 		_delay_ms(2000);
 		
