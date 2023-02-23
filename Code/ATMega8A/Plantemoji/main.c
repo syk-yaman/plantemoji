@@ -44,7 +44,6 @@ int main()
 	/************************************************************************/
 	/* DHT Initialisation                                                   */
 	/************************************************************************/
-	int soilTemperature_ds18b20;
 	double airTemperature_dht22[1];
 	double airHumidity_dht22[1];
 	DHT_Setup();
@@ -73,9 +72,11 @@ int main()
 		//Delay (sensor needs time to perform conversion)
 		_delay_ms(1000);
 
+		int digitalTemperature;
+		double soilTemperature_ds18b20;
 		//Read temperature (without ROM matching)
-		ds18b20read( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL, &soilTemperature_ds18b20 );
-
+		ds18b20read( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL, &digitalTemperature);
+		soilTemperature_ds18b20 = digitalTemperature/16.0;
 		_delay_ms(2000);
 		
 		/************************************************************************/
@@ -105,9 +106,9 @@ int main()
 		/************************************************************************/
 		/* HW-390 Reading                                                       */
 		/************************************************************************/
-		int soilHumidity_HW390 = ADCsingleREAD(0);
-		//float voltageHW390 = (adcHW390 * V_REF)/1024;
-		
+		int soilHumidityDigital = ADCsingleREAD(0);
+		double soilHumidity_HW390 = soilHumidityDigital/1024.0;
+				
 		_delay_ms(2000);
 		
 		/************************************************************************/
@@ -137,18 +138,18 @@ int main()
 		/*                                                                      */
 		/*					Sensor values order:                                */
 		/*                                                                      */
-		/*					1. dht22: air temperature                           */
-		/*					2. dht22: air humidity                              */
-		/*					3. ds18b20: soil temperature                        */
-		/*					4. HW390: soil humidity                             */
-		/*					5. Si1145: light                                    */
-		/*					6. Si1145: infrared                                 */
-		/*					7. Si1145: UV                                       */
+		/*					1. Dht22: air temperature => Celsius                */
+		/*					2. Dht22: air humidity => Percentage                */
+		/*					3. DS18b20: soil temperature => Celsius             */
+		/*					4. HW390: soil humidity  => Percentage              */
+		/*					5. Si1145: light => Lux                             */
+		/*					6. Si1145: infrared => Lux                          */
+		/*					7. Si1145: UV => UV Index (1 to 11+)                */
 		/*                                                                      */
 		/************************************************************************/
 		
 		char strbuf[400];
-		sprintf (strbuf, "%f,%f,%d,%d,%d,%d,%f\r\n",
+		sprintf (strbuf, "%f,%f,%f,%f,%d,%d,%f\r\n",
 		airTemperature_dht22[0], 
 		airHumidity_dht22[0],
 		soilTemperature_ds18b20, 
