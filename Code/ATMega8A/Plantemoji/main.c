@@ -27,7 +27,7 @@ const float V_REF = 5.0; //reference voltage for the ADC
 #define FOSC 8000000// Clock Speed
 #define MYUBRR FOSC/16/BAUD-1
 
-//Version 1.1.1
+//Version 1.1.2
 int main()
 {
 	/************************************************************************/
@@ -107,7 +107,7 @@ int main()
 		/* HW-390 Reading                                                       */
 		/************************************************************************/
 		unsigned int soilHumidityDigital = ADCsingleREAD(0);
-		double soilHumidity_HW390 = soilHumidityDigital/10.24;
+		double soilHumidity_HW390 = 100 - soilHumidityDigital/10.24;
 				
 		_delay_ms(2000);
 		
