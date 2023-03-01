@@ -38,7 +38,7 @@
 #include "LCD_Driver.h"
 #include "LCD_Fonts.h"
 #include "LCD_Debug.h"
-#include <avr/pgmspace.h>
+#include <pgmspace.h>
 /**
  * Image attributes
 **/
