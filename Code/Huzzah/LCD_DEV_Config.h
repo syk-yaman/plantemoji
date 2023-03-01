@@ -36,9 +36,9 @@
 #include <stdio.h>
 #include <SPI.h>
 #include "LCD_Debug.h"
-#include <pgmspace.h>
-#include <Arduino.h>
-#include <analogWrite.h>
+#include <avr/pgmspace.h>
+
+
 
 #define UBYTE   uint8_t
 #define UWORD   uint16_t
@@ -49,8 +49,8 @@
 **/
 #define DEV_CS_PIN  0
 #define DEV_DC_PIN  2
-#define DEV_RST_PIN 13
-#define DEV_BL_PIN  14
+#define DEV_RST_PIN 15
+#define DEV_BL_PIN  16
 
 
 /**
