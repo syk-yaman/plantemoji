@@ -61,7 +61,10 @@ int main()
 	
 	while(1)
 	{
-		PORTD |= 0b11000000; 
+		//PORTD |= 0b11000000; 
+		PORTD |= (1 << PIND6);
+		PORTD |= (1 << PIND7);
+		
 		/************************************************************************/
 		/* DS18B20 Reading                                                      */
 		/************************************************************************/
@@ -99,6 +102,9 @@ int main()
 			//Do something else
 			break;
 		}
+		//PORTD &= 0b00111111;
+		PORTD &= ~(1 << PIND6);
+		PORTD &= ~(1 << PIND7);
 		
 		//Sensor needs 1-2s to stabilize its readings
 		_delay_ms(2000);
@@ -158,7 +164,6 @@ int main()
 		amb_ir,
 		uv);
 		usart_pstr(strbuf);
-		PORTD &= 0b00111111; 
 
 	}
 	return (0);
@@ -215,7 +220,13 @@ void handleSi1145Failure(unsigned char code){
 
 void initPorts(){
 	DDRB = 0x00; // Set PORT B to input
-	DDRD |= 0b11000000; // Set Pin D6 (pump) D7 (humidifier) to output
+	DDRD |= (1 << DDB6);
+	DDRD |= (1 << DDB7);
+	 
+	//DDRD |= 0b11000000; // Set Pin D6 (pump) D7 (humidifier) to output
+	PORTD &= ~(1 << PIND6);
+	PORTD &= ~(1 << PIND7);
+	//PORTD &= 0b00111111; // Turned off by default
 }
 
 
