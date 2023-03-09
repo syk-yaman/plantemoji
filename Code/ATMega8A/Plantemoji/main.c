@@ -61,7 +61,7 @@ int main()
 	
 	while(1)
 	{
-		
+		PORTD |= 0b11000000; 
 		/************************************************************************/
 		/* DS18B20 Reading                                                      */
 		/************************************************************************/
@@ -158,6 +158,7 @@ int main()
 		amb_ir,
 		uv);
 		usart_pstr(strbuf);
+		PORTD &= 0b00111111; 
 
 	}
 	return (0);
@@ -214,6 +215,7 @@ void handleSi1145Failure(unsigned char code){
 
 void initPorts(){
 	DDRB = 0x00; // Set PORT B to input
+	DDRD |= 0b11000000; // Set Pin D6 (pump) D7 (humidifier) to output
 }
 
 
