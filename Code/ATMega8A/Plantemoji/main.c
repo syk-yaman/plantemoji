@@ -61,9 +61,9 @@ int main()
 	
 	while(1)
 	{
-		//PORTD |= 0b11000000; 
-		PORTD |= (1 << PIND6);
-		PORTD |= (1 << PIND7);
+		
+		PORTD |= (1 << PIND6); //Turn on the pump
+		PORTD |= (1 << PIND7); //Turn on the humidifier
 		
 		/************************************************************************/
 		/* DS18B20 Reading                                                      */
@@ -102,9 +102,9 @@ int main()
 			//Do something else
 			break;
 		}
-		//PORTD &= 0b00111111;
-		PORTD &= ~(1 << PIND6);
-		PORTD &= ~(1 << PIND7);
+		
+		PORTD &= ~(1 << PIND6);	//Turn off the pump
+		PORTD &= ~(1 << PIND7);	//Turn off the humidifier
 		
 		//Sensor needs 1-2s to stabilize its readings
 		_delay_ms(2000);
@@ -223,10 +223,8 @@ void initPorts(){
 	DDRD |= (1 << DDB6);
 	DDRD |= (1 << DDB7);
 	 
-	//DDRD |= 0b11000000; // Set Pin D6 (pump) D7 (humidifier) to output
-	PORTD &= ~(1 << PIND6);
-	PORTD &= ~(1 << PIND7);
-	//PORTD &= 0b00111111; // Turned off by default
+	PORTD &= ~(1 << PIND6); // Set Pin D6 (pump) as output
+	PORTD &= ~(1 << PIND7); // Set Pin D7 (humidifier) as output
 }
 
 
