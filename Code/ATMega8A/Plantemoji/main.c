@@ -19,6 +19,8 @@ void usart_pstr (char *s);
 void initPorts();
 void handleSi1145Failure(unsigned char code);
 int ADCsingleREAD(uint8_t adctouse);
+void pumpControl(int isOn);
+void humidifierControl(int isOn);
 
 #define BAUD 115200
 #define BAUDRATE F_CPU/16/BAUD-1
@@ -27,7 +29,11 @@ const float V_REF = 5.0; //reference voltage for the ADC
 #define FOSC 8000000// Clock Speed
 #define MYUBRR FOSC/16/BAUD-1
 
-//Version 1.1.2
+//global states
+int pumpStatus = 0;
+int humidifierStatus = 0;
+
+//Version 1.2.0
 int main()
 {
 	/************************************************************************/
@@ -62,8 +68,21 @@ int main()
 	while(1)
 	{
 		
-		PORTD |= (1 << PIND6); //Turn on the pump
-		PORTD |= (1 << PIND7); //Turn on the humidifier
+		/*****************************************************************************/
+		/* Checking and acting upon pump & humidifier control signal from Huzzah     */
+		/*****************************************************************************/
+		
+		if(bit_is_low(PIND,4)){
+			pumpControl(1);
+		} else {
+			pumpControl(0);
+		}
+		
+		if(bit_is_low(PIND,5)){
+			humidifierControl(1);
+			} else {
+			humidifierControl(0);
+		}
 		
 		/************************************************************************/
 		/* DS18B20 Reading                                                      */
@@ -103,9 +122,6 @@ int main()
 			break;
 		}
 		
-		PORTD &= ~(1 << PIND6);	//Turn off the pump
-		PORTD &= ~(1 << PIND7);	//Turn off the humidifier
-		
 		//Sensor needs 1-2s to stabilize its readings
 		_delay_ms(2000);
 		
@@ -142,7 +158,7 @@ int main()
 		
 		/************************************************************************/
 		/*                                                                      */
-		/*					Sensor values order:                                */
+		/*					Sensor values sent to Huzzah:                       */
 		/*                                                                      */
 		/*					1. Dht22: air temperature => Celsius                */
 		/*					2. Dht22: air humidity => Percentage                */
@@ -150,23 +166,49 @@ int main()
 		/*					4. HW390: soil humidity  => Percentage              */
 		/*					5. Si1145: light => Lux                             */
 		/*					6. Si1145: infrared => Lux                          */
-		/*					7. Si1145: UV => UV Index (1 to 11+)                */
+		/*					7. Si1145: UV => UV Index (1 to 11+)				*/
+		/*					8. Pump status: (0/on  1/off) => Integer            */
+		/*					9. Humidifier status: (0/on  1/off) => Integer		*/
 		/*                                                                      */
 		/************************************************************************/
 		
 		char strbuf[400];
-		sprintf (strbuf, "%f,%f,%f,%f,%d,%d,%f\r\n",
+		sprintf (strbuf, "%f,%f,%f,%f,%d,%d,%f,%d,%d\r\n",
 		airTemperature_dht22[0], 
 		airHumidity_dht22[0],
 		soilTemperature_ds18b20, 
 		soilHumidity_HW390,
 		amb_als,
 		amb_ir,
-		uv);
+		uv,
+		pumpStatus,
+		humidifierStatus);
 		usart_pstr(strbuf);
 
 	}
 	return (0);
+}
+
+void pumpControl(int isOn){
+	if(isOn == 1){
+		PORTD |= (1 << PIND6); //Turn on the pump
+		pumpStatus = 1;
+	}
+	if(isOn == 0){
+		PORTD &= ~(1 << PIND6);	//Turn off the pump
+		pumpStatus = 0;
+	}
+}
+
+void humidifierControl(int isOn){
+	if(isOn == 1){
+		PORTD |= (1 << PIND7); //Turn on the humidifier
+		humidifierStatus = 1;
+	}
+	if(isOn == 0){
+		PORTD &= ~(1 << PIND7);	//Turn off the humidifier
+		humidifierStatus = 0;
+	}
 }
 
 int ADCsingleREAD(uint8_t adctouse)
@@ -220,11 +262,14 @@ void handleSi1145Failure(unsigned char code){
 
 void initPorts(){
 	DDRB = 0x00; // Set PORT B to input
-	DDRD |= (1 << DDB6);
-	DDRD |= (1 << DDB7);
+	DDRD |= (1 << DDB6); // Set Pin D6 (pump transistor control) as output
+	DDRD |= (1 << DDB7); // Set Pin D7 (humidifier transistor control) as output
 	 
-	PORTD &= ~(1 << PIND6); // Set Pin D6 (pump) as output
-	PORTD &= ~(1 << PIND7); // Set Pin D7 (humidifier) as output
+	DDRD &= ~(1 << PIND4); // Set Pin D4 (pump control signal from Huzzah) as input
+	DDRD &= ~(1 << PIND5); // Set Pin D5 (humidifier control signal from Huzzah) as input
+	
+	PORTD &= ~(1 << PIND6); //off by default
+	PORTD &= ~(1 << PIND7); //off by default
 }
 
 
