@@ -59,7 +59,7 @@ void setup() {
   
   pinMode(BUILTIN_LED, OUTPUT);     
   digitalWrite(BUILTIN_LED, HIGH);  
-  drawMoodOnScreen(1);
+  //drawMoodOnScreen(1);
 }
 
 
@@ -82,6 +82,8 @@ void loop() {
     /*          5. Si1145: light                                            */
     /*          6. Si1145: infrared                                         */
     /*          7. Si1145: UV                                               */
+    /*          8. Pump status: (0/on  1/off) => Integer                    */
+    /*          9. Humidifier status: (0/on  1/off) => Integer              */
     /*                                                                      */
     /************************************************************************/
     
@@ -92,6 +94,8 @@ void loop() {
       String si1145_light = splitString(sensorDataReceived,',',4);
       String si1145_infrared = splitString(sensorDataReceived,',',5);
       String si1145_uv = splitString(sensorDataReceived,',',6);
+      String pump_status = splitString(sensorDataReceived,',',7);
+      String humidifier_status = splitString(sensorDataReceived,',',8);
 
       Serial.println("------ ATMega8A said: -------");
       Serial.println("dht22_airTemperature: " + dht22_airTemperature);
@@ -101,6 +105,8 @@ void loop() {
       Serial.println("si1145_light: " + si1145_light);
       Serial.println("si1145_infrared: " + si1145_infrared);
       Serial.println("si1145_uv: " + si1145_uv);
+      Serial.println("pump_status: " + pump_status);
+      Serial.println("humidifier_status: " + humidifier_status);
       
       //int mood = resolveMood(soilMoistureReading.toFloat(), humidityReading.toFloat());
       sendMQTT(
@@ -110,7 +116,9 @@ void loop() {
         hw390_soilHumidity, 
         si1145_light, 
         si1145_infrared, 
-        si1145_uv);
+        si1145_uv,
+        pump_status,
+        humidifier_status);
         
       //drawMoodOnScreen(mood);
     }
@@ -142,7 +150,9 @@ void sendMQTT(
         String hw390_soilHumidity, 
         String si1145_light, 
         String si1145_infrared, 
-        String si1145_uv) {
+        String si1145_uv,
+        String pump_status,
+        String humidifier_status) {
 
   if (!client.connected()) {
     reconnect();
@@ -170,9 +180,13 @@ void sendMQTT(
 
   si1145_uv.toCharArray(msg,si1145_uv.length()+1);
   client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/uv", msg);
+
+  pump_status.toCharArray(msg,pump_status.length()+1);
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/pumpStatus", msg);
   
-  //sprintf(msg, "%05d", mood);
-  //client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/mood", msg);
+  humidifier_status.toCharArray(msg,humidifier_status.length()+1);
+  client.publish("student/CASA0014/plant/ucfnmyr/plantemoji/humidifierStatus", msg);
+
 }
 
 //Preparing & clearing LCD screen
