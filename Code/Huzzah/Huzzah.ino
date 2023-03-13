@@ -229,10 +229,11 @@ void reconnect() {
     clientId += String(random(0xffff), HEX);
     
     // Attempt to connect
-    if (client.connect(clientId.c_str(), mqttuser, mqttpass)) {
+    if (client.connect(clientId.c_str())) {
       Serial.println("connected");
       // ... and subscribe to messages on broker
-      client.subscribe("student/CASA0014/plant/ucfnmyr/plantemoji");
+      client.subscribe("student/CASA0014/plant/ucfnmyr/plantemoji/humidifierControl");
+      client.subscribe("student/CASA0014/plant/ucfnmyr/plantemoji/pumpControl");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
