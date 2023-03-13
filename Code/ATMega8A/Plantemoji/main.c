@@ -98,7 +98,7 @@ int main()
 		double soilTemperature_ds18b20;
 		//Read temperature (without ROM matching)
 		ds18b20read( &PORTC, &DDRC, &PINC, ( 1 << 1 ), NULL, &digitalTemperature);
-		soilTemperature_ds18b20 = digitalTemperature/16.0;
+		soilTemperature_ds18b20 = digitalTemperature/16.0; //divided by 16 according to the used library's specs
 		_delay_ms(2000);
 		
 		/************************************************************************/
