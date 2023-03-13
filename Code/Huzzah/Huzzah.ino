@@ -27,6 +27,9 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 int currentMood = -1;
+int pumpPin = 13;
+int humidifierPin = 12;
+
 Timezone GB;
 
 void setup() {
@@ -54,11 +57,11 @@ void setup() {
   Serial.println("London time: " + GB.dateTime());  
 
   //Initialise MQTT connection
-  client.setServer(mqtt_server, 1884);
+  client.setServer(mqtt_server, 9001);
   client.setCallback(callback); 
   
-  pinMode(BUILTIN_LED, OUTPUT);     
-  digitalWrite(BUILTIN_LED, HIGH);  
+  pinMode(12, OUTPUT);
+  pinMode(13, OUTPUT);
   //drawMoodOnScreen(1);
 }
 
@@ -254,13 +257,29 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-  // Switch on the LED if an 1 was received as first character
-  if ((char)payload[0] == '1') {
-    digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
-    // but actually the LED is on; this is because it is active low on the ESP-01)
-  } else {
-    digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
-  }
+  String convertedTopic = String(topic);
+  
+  if(convertedTopic.indexOf("pumpControl") != -1)
+  {
+    if ((char)payload[0] == '1') {
+      digitalWrite(pumpPin, HIGH);  
+      Serial.println("pump signal to high");
+    } else {
+      digitalWrite(pumpPin, LOW);
+      Serial.println("pump signal to low");
+    }
+  }  
+
+  if(convertedTopic.indexOf("humidifierControl") != -1)
+  {
+    if ((char)payload[0] == '1') {
+      digitalWrite(humidifierPin, HIGH);  
+      Serial.println("humidifier signal to high");
+    } else {
+      digitalWrite(humidifierPin, LOW);
+      Serial.println("humidifier signal to low");
+    }
+  }  
 
 }
 
