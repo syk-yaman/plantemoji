@@ -60,8 +60,8 @@ void setup() {
   client.setServer(mqtt_server, 9001);
   client.setCallback(callback); 
   
-  pinMode(12, OUTPUT);
-  pinMode(13, OUTPUT);
+  pinMode(humidifierPin, OUTPUT);
+  pinMode(pumpPin, OUTPUT);
   //drawMoodOnScreen(1);
 }
 
