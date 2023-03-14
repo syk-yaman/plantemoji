@@ -16,7 +16,8 @@
  *  
  *  Go to "Tools>Manage Libraries" and search for Arduino_TensorFlowLite and hit install if you dont have it installed
 */
-#include <TensorFlowLite.h>
+#include <TensorFlowLite_ESP32.h>
+#include <analogWrite.h>
 
 // we are including our model in a seperate file to keep the code simpler
 #include "model.h"
@@ -26,7 +27,7 @@
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/schema/schema_generated.h"
-#include "tensorflow/lite/version.h"
+//#include "tensorflow/lite/version.h"
 
 
 /* 
