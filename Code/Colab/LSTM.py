@@ -109,6 +109,11 @@ def show_raw_visualization(data):
 
 show_raw_visualization(df)
 
+df2 = pd.DataFrame({'airHumidity':airHumidityDataset, 'airTemperature':airTemperatureDataset, 'soilHumidity':soilHumidityDataset, 'soilTemperature':soilTemperatureDataset, 'uv':uvDataset})
+#Be careful before calculating correlation to chech the dtypes of the dataframe, even if you see them as floats in df.describe(),
+#that doesn't mean they are floats!
+df.dtypes
+df2 = df2.apply(pd.to_numeric)
 
 def show_heatmap(data):
     plt.matshow(data.corr())
