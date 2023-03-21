@@ -13,6 +13,8 @@ org = "-----"
 token = "-----"
 # Store the URL of your InfluxDB instance
 url="----"
+fromDate = '2023-03-05T00:00:00.000000000Z'
+toDate = '2023-03-08T23:59:59.941926044Z'
 
 def influxDbQuery(valueName):
     client = influxdb_client.InfluxDBClient(
@@ -22,7 +24,7 @@ def influxDbQuery(valueName):
     )
     query_api = client.query_api()
     query = 'from(bucket: "'+bucket+'")\
-    |> range(start: 2023-02-24T00:00:00.000000000Z, stop: 2023-02-25T23:59:59.941926044Z)\
+    |> range(start:' + fromDate + ' , stop:' + toDate + ' )\
     |> filter(fn: (r) => r["_field"] == "value")\
     |> filter(fn: (r) => r["host"] == "30f2640405ed")\
     |> filter(fn: (r) => r["plant-topics"] == "student/CASA0014/plant/ucfnmyr/plantemoji/'+valueName+'")'
@@ -33,69 +35,45 @@ def influxDbQuery(valueName):
         results.append((record.get_time(), record.get_value()))
     return results
    
-airHumidityResult = influxDbQuery('airHumidity')
-airTemperatureResult = influxDbQuery('airTemperature')
-soilHumidityResult = influxDbQuery('soilHumidity')
-soilTemperatureResult = influxDbQuery('soilTemperature')
-uvResult = influxDbQuery('uv')
+airHumidityQueryResult = influxDbQuery('airHumidity')
+airTemperatureQueryResult = influxDbQuery('airTemperature')
+soilHumidityQueryResult = influxDbQuery('soilHumidity')
+soilTemperatureQueryResult = influxDbQuery('soilTemperature')
+uvQueryResult = influxDbQuery('uv')
 
-print(len(airHumidityResult))
-print(len(airTemperatureResult))
-print(len(soilHumidityResult))
-print(len(soilTemperatureResult))
-print(len(uvResult))
-
-
-airHumidityDataset = np.array(airHumidityResult)[:, 1]
-airTemperatureDataset = np.array(airTemperatureResult)[:, 1]
-soilHumidityDataset = np.array(soilHumidityResult)[:, 1]
-soilTemperatureDataset = np.array(soilTemperatureResult)[:, 1]
-uvDataset = np.array(uvResult)[:, 1]
+print(len(airHumidityQueryResult))
+print(len(airTemperatureQueryResult))
+print(len(soilHumidityQueryResult))
+print(len(soilTemperatureQueryResult))
+print(len(uvQueryResult))
 
 
-df = pd.DataFrame({'airHumidity':airHumidityDataset, 'airTemperature':airTemperatureDataset, 'soilHumidity':soilHumidityDataset, 'soilTemperature':soilTemperatureDataset, 'uv':uvDataset})
+airHumidityDataset = np.array(airHumidityQueryResult)[:, 1]
+airTemperatureDataset = np.array(airTemperatureQueryResult)[:, 1]
+soilHumidityDataset = np.array(soilHumidityQueryResult)[:, 1]
+soilTemperatureDataset = np.array(soilTemperatureQueryResult)[:, 1]
+uvDataset = np.array(uvQueryResult)[:, 1]
 
-array = np.array(results)
+datetimeDataset = np.array(uvQueryResult)[:, 0]
 
+df = pd.DataFrame({'datetime':datetimeDataset, 'airHumidity':airHumidityDataset, 'airTemperature':airTemperatureDataset, 'soilHumidity':soilHumidityDataset, 'soilTemperature':soilTemperatureDataset, 'uv':uvDataset})
 
-df = pd.DataFrame(array[:, 1], columns=['humidity'])
-print(df)
-df.plot()
-
-df = 
+#df.to_csv('importedDataset.csv')
 
 titles = [
-    "Pressure",
-    "Temperature",
-    "Temperature in Kelvin",
-    "Temperature (dew point)",
-    "Relative Humidity",
-    "Saturation vapor pressure",
-    "Vapor pressure",
-    "Vapor pressure deficit",
-    "Specific humidity",
-    "Water vapor concentration",
-    "Airtight",
-    "Wind speed",
-    "Maximum wind speed",
-    "Wind direction in degrees",
+    "airHumidity",
+    "airTemperature",
+    "soilHumidity",
+    "soilTemperature",
+    "uv"
 ]
 
 feature_keys = [
-    "p (mbar)",
-    "T (degC)",
-    "Tpot (K)",
-    "Tdew (degC)",
-    "rh (%)",
-    "VPmax (mbar)",
-    "VPact (mbar)",
-    "VPdef (mbar)",
-    "sh (g/kg)",
-    "H2OC (mmol/mol)",
-    "rho (g/m**3)",
-    "wv (m/s)",
-    "max. wv (m/s)",
-    "wd (deg)",
+    "airHumidity",
+    "airTemperature",
+    "soilHumidity",
+    "soilTemperature",
+    "uv"
 ]
 
 colors = [
@@ -103,15 +81,10 @@ colors = [
     "orange",
     "green",
     "red",
-    "purple",
-    "brown",
-    "pink",
-    "gray",
-    "olive",
-    "cyan",
+    "purple"
 ]
 
-date_time_key = "Date Time"
+date_time_key = "datetime"
 
 def show_raw_visualization(data):
     time_data = data[date_time_key]
@@ -142,7 +115,6 @@ def show_heatmap(data):
     plt.xticks(range(data.shape[1]), data.columns, fontsize=14, rotation=90)
     plt.gca().xaxis.tick_bottom()
     plt.yticks(range(data.shape[1]), data.columns, fontsize=14)
-
     cb = plt.colorbar()
     cb.ax.tick_params(labelsize=14)
     plt.title("Feature Correlation Heatmap", fontsize=14)
