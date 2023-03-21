@@ -109,10 +109,12 @@ def show_raw_visualization(data):
 
 show_raw_visualization(df)
 
+#remove datetime column 
 df2 = pd.DataFrame({'airHumidity':airHumidityDataset, 'airTemperature':airTemperatureDataset, 'soilHumidity':soilHumidityDataset, 'soilTemperature':soilTemperatureDataset, 'uv':uvDataset})
-#Be careful before calculating correlation to chech the dtypes of the dataframe, even if you see them as floats in df.describe(),
+
+#NOTE: Be careful before calculating correlation to chech the dtypes of the dataframe, even if you see them as floats in df.describe(),
 #that doesn't mean they are floats!
-df.dtypes
+df2.dtypes
 df2 = df2.apply(pd.to_numeric)
 
 def show_heatmap(data):
@@ -125,4 +127,6 @@ def show_heatmap(data):
     plt.title("Feature Correlation Heatmap", fontsize=14)
     plt.show()
 
-show_heatmap(df)
+show_heatmap(df2)
+
+
