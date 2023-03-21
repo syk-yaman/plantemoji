@@ -6,6 +6,7 @@ import tensorflow as tf
 from tensorflow import keras
 import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
+import numpy as np
 
 from zipfile import ZipFile
 import os
@@ -15,8 +16,8 @@ org = "-----"
 token = "-----"
 # Store the URL of your InfluxDB instance
 url="----"
-fromDate = '2023-03-05T00:00:00.000000000Z'
-toDate = '2023-03-08T23:59:59.941926044Z'
+fromDate = '2023-02-22T00:00:00.000000000Z'
+toDate = '2023-03-20T23:59:59.941926044Z'
 
 def influxDbQuery(valueName):
     client = influxdb_client.InfluxDBClient(
@@ -118,6 +119,7 @@ df2 = pd.DataFrame({'airHumidity':airHumidityDataset, 'airTemperature':airTemper
 #that doesn't mean they are floats!
 df2.dtypes
 df2 = df2.apply(pd.to_numeric)
+df2.dtypes
 
 def show_heatmap(data, method):
     plt.matshow(data.corr(method))
@@ -136,8 +138,8 @@ split_fraction = 0.715
 train_split = int(split_fraction * int(df.shape[0]))
 step = 50
 
-past = 12000
-future = 4000
+past = 7200
+future = 720
 learning_rate = 0.001
 batch_size = 256
 
