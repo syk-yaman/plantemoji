@@ -30,6 +30,9 @@ int currentMood = -1;
 int pumpPin = 13;
 int humidifierPin = 12;
 
+int pumpToBeOn = -1;
+int humidfierToBeOn = -1;
+
 Timezone GB;
 
 void setup() {
@@ -67,6 +70,10 @@ void setup() {
 
 
 void loop() {
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
   //When a new sensor reading is received from Arduino, it will be parsed and 
   //sent over MQTT, then the LCD screen is updated accordingly
   if (Serial.available() > 0) {
@@ -198,7 +205,7 @@ void initialiseLCDScreen(){
   LCD_Init();
   
   LCD_SetBacklight(100);
-  Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 90, BLACK);
+  Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 0, BLACK);
   Paint_Clear(BLACK);
 }
 
@@ -218,7 +225,12 @@ void drawMoodOnScreen(int mood){
     currentMood = 1;
     Serial.println("Drawing happy face");
     Paint_Clear(BLACK);
-    Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
+    //Paint_SetRotate(ROTATE_0);
+    Paint_DrawImage(gImage_happy, 5, 4, 160, 160); 
+    //Paint_DrawString_EN(5, 5, "Next humidifier schedule:",&Font16,  BLACK, GREEN);
+    Paint_DrawImage(gImage_next_watering, 6, 160, 160, 160); 
+    //Paint_DrawImage(gImage_watering_now, 6, 160, 160, 160);
+    
   } 
 }
 
