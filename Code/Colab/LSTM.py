@@ -1,4 +1,5 @@
 #This code is based on https://github.com/google-coral/tutorials/blob/master/train_lstm_timeseries_ptq_tf2.ipynb
+#and https://github.com/djdunc/casa0018/blob/main/Week7/CASA0018_7_lab_solution.ipynb
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,11 +12,12 @@ from sklearn.preprocessing import MinMaxScaler
 from zipfile import ZipFile
 import os
 
-bucket = "-----"
-org = "-----"
-token = "-----"
+############################ SECTION: Importing dataset from InfluxDB ############################
+bucket = "INSERT_HERE"
+org = "INSERT_HERE"
+token = "INSERT_HERE"
 # Store the URL of your InfluxDB instance
-url="----"
+url="INSERT_HERE"
 fromDate = '2023-02-22T00:00:00.000000000Z'
 toDate = '2023-03-20T23:59:59.941926044Z'
 
@@ -53,6 +55,7 @@ print(len(soilHumidityQueryResult))
 print(len(soilTemperatureQueryResult))
 print(len(uvQueryResult))
 
+############################ SECTION: Converting the shape of the dataset ############################
 
 airHumidityDataset = np.array(airHumidityQueryResult)[:, 1]
 airTemperatureDataset = np.array(airTemperatureQueryResult)[:, 1]
@@ -124,6 +127,8 @@ df2.dtypes
 df2 = df2.apply(pd.to_numeric)
 df2.dtypes
 
+############################ SECTION: Trying to understand dataset's correlation ############################
+
 def show_heatmap(data, method):
     plt.matshow(data.corr(method))
     plt.xticks(range(data.shape[1]), data.columns, fontsize=14, rotation=90)
@@ -136,6 +141,8 @@ def show_heatmap(data, method):
 
 show_heatmap(df2, 'pearson')
 
+
+############################ SECTION: Splitting the dataset and normalise it ############################
 
 split_fraction = 0.715
 train_split = int(split_fraction * int(df.shape[0]))
@@ -201,7 +208,8 @@ dataset_train = keras.preprocessing.timeseries_dataset_from_array(
     batch_size=batch_size,
 )
 
-####
+############################ SECTION: Prepare for training ############################
+
 
 x_end = len(val_data) - past - future
 
@@ -245,6 +253,9 @@ modelckpt_callback = keras.callbacks.ModelCheckpoint(
     save_best_only=True,
 )
 
+############################ SECTION: Training and visualising the loss ############################
+
+
 history = model.fit(
     dataset_train,
     epochs=epochs,
@@ -267,6 +278,9 @@ def visualize_loss(history, title):
     print("Final val loss: ", val_loss)
 
 visualize_loss(history, "Training and Validation Loss")
+
+############################ SECTION: Plot examples of future predictions ############################
+
 
 dataset_test = keras.preprocessing.timeseries_dataset_from_array(
     x_val,
@@ -307,7 +321,9 @@ for x, y in dataset_test.take(5):
         12,
         "Single Step Prediction",
     )
-    
+
+############################ SECTION: Model conversion to TFLite ############################
+
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 converter.target_spec.supported_ops = [
 tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS
@@ -341,7 +357,9 @@ def representative_data_gen():
     input_data = tf.cast(input_data, dtype=tf.float32)
     yield [input_data]
     
-    
+
+############################ SECTION: Model quantization ############################
+
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 # This enables quantization
 converter.optimizations = [tf.lite.Optimize.DEFAULT]
@@ -359,7 +377,8 @@ tflite_model_quant = converter.convert()
 with open('plantemoji_quant.tflite', 'wb') as f:
   f.write(tflite_model_quant)
   
-  
+
+############################ SECTION: Testing the quantized model ############################
 
 def set_input_tensor(interpreter, input):
   input_details = interpreter.get_input_details()[0]
