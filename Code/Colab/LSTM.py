@@ -307,3 +307,88 @@ for x, y in dataset_test.take(5):
         12,
         "Single Step Prediction",
     )
+    
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+converter.target_spec.supported_ops = [
+tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS
+]
+converter._experimental_lower_tensor_list_ops = True
+
+tflite_model = converter.convert()
+
+with open('plantemoji.tflite', 'wb') as f:
+  f.write(tflite_model)
+
+
+batch_size = 1
+model.input.set_shape((batch_size,) + model.input.shape[1:])
+model.summary()
+
+
+# Our representative dataset is the same as the training dataset,
+# but the batch size must now be 1
+dataset_repr = keras.preprocessing.timeseries_dataset_from_array(
+    x_train,
+    y_train,
+    sequence_length=sequence_length,
+    sampling_rate=step,
+    batch_size=batch_size,
+)
+
+def representative_data_gen():
+  # To ensure full coverage of possible inputs, we use the whole train set
+  for input_data, _ in dataset_repr.take(int(len(x_train))):
+    input_data = tf.cast(input_data, dtype=tf.float32)
+    yield [input_data]
+    
+    
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+# This enables quantization
+converter.optimizations = [tf.lite.Optimize.DEFAULT]
+# This sets the representative dataset for quantization
+converter.representative_dataset = representative_data_gen
+# This ensures that if any ops can't be quantized, the converter throws an error
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+# For full integer quantization, though supported types defaults to int8 only, we explicitly declare it for clarity
+converter.target_spec.supported_types = [tf.int8]
+# These set the input and output tensors to int8
+converter.inference_input_type = tf.uint8
+converter.inference_output_type = tf.uint8
+tflite_model_quant = converter.convert()
+
+with open('plantemoji_quant.tflite', 'wb') as f:
+  f.write(tflite_model_quant)
+  
+  
+
+def set_input_tensor(interpreter, input):
+  input_details = interpreter.get_input_details()[0]
+  tensor_index = input_details['index']
+  input_tensor = interpreter.tensor(tensor_index)()
+  # Inputs for the TFLite model must be uint8, so we quantize our input data.
+  scale, zero_point = input_details['quantization']
+  quantized_input = np.uint8(input / scale + zero_point)
+  input_tensor[:, :, :] = quantized_input
+
+def predict_quan(interpreter, input):
+  set_input_tensor(interpreter, input)
+  interpreter.invoke()
+  output_details = interpreter.get_output_details()[0]
+  output = interpreter.get_tensor(output_details['index'])
+  # Outputs from the TFLite model are uint8, so we dequantize the results:
+  scale, zero_point = output_details['quantization']
+  output = scale * (output - zero_point)
+  return output
+
+interpreter = tf.lite.Interpreter('plantemoji_quant.tflite')
+interpreter.allocate_tensors()
+
+for x, y in dataset_test.take(5):
+  prediction = predict_quan(interpreter, x)
+  print('prediction:', prediction[0])
+  print('truth:', y[0].numpy())
+  show_plot(
+      [x[0][:, 1].numpy(), y[0], prediction[0]],
+      12,
+      "Single Step Prediction (TF Lite)",
+  )
