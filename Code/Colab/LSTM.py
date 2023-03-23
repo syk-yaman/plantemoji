@@ -7,7 +7,7 @@ from tensorflow import keras
 import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
 import numpy as np
-
+from sklearn.preprocessing import MinMaxScaler
 from zipfile import ZipFile
 import os
 
@@ -43,6 +43,9 @@ airTemperatureQueryResult = influxDbQuery('airTemperature')
 soilHumidityQueryResult = influxDbQuery('soilHumidity')
 soilTemperatureQueryResult = influxDbQuery('soilTemperature')
 uvQueryResult = influxDbQuery('uv')
+
+#if not all results are equal in length:
+#airHumidityQueryResult = airHumidityQueryResult[:-14]
 
 print(len(airHumidityQueryResult))
 print(len(airTemperatureQueryResult))
@@ -147,29 +150,44 @@ def normalize(data, train_split):
     data_mean = data[:train_split].mean(axis=0)
     data_std = data[:train_split].std(axis=0)
     return (data - data_mean) / data_std
-    
+
 print(
     "The selected parameters are:",
     ", ".join([titles[i] for i in [0, 1, 2, 3, 4]]),
 )
 selected_features = [feature_keys[i] for i in [0, 1, 2, 3, 4]]
 features = df2[selected_features] #using the corrected dtypes
-features.index = df[date_time_key]
+#features.index = df[date_time_key]
 features.head()
 
-features = normalize(features.values, train_split)
+
+
+
+
+#features = normalize(features.values, train_split)
 features = pd.DataFrame(features)
+#features.columns = features.loc[0]
+#features = features.drop(0)
 features.head()
+
+scaler = MinMaxScaler(copy=True, feature_range=(0, 1))
+scaler.fit(features.values)
+
 
 train_data = features.loc[0 : train_split - 1]
 val_data = features.loc[train_split:]
 
+train_data = scaler.transform(train_data)
+val_data = scaler.transform(val_data)
+
+train_data = pd.DataFrame(train_data)
+val_data = pd.DataFrame(val_data)
 
 start = past + future
 end = start + train_split
 
 x_train = train_data[[i for i in range(5)]].values
-y_train = features.iloc[start:end][[1]]
+y_train = features.iloc[start:end][[titles[0]]] #change here the target training
 print('training size:', len(x_train))
 
 sequence_length = int(past / step)
@@ -190,7 +208,7 @@ x_end = len(val_data) - past - future
 label_start = train_split + past + future
 
 x_val = val_data.iloc[:x_end][[i for i in range(5)]].values
-y_val = features.iloc[label_start:][[1]]
+y_val = features.iloc[label_start:][[titles[0]]] #change here the target training
 
 dataset_val = keras.preprocessing.timeseries_dataset_from_array(
     x_val,
