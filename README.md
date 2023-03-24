@@ -1,21 +1,70 @@
 
-# Plantemoji: an IoT plant monitor made in CASA, UCL
+# Plantemoji: a smart IoT plant caring system
 
-A plant caring and irrigation device with a web infrastructure to monitor and control plants environment and explain their living state in emojis. Basically, plants will be able to talk with you using emojis!
+A smart plant caring and irrigation device with a web infrastructure to monitor and control plants environment and explain their living state in emojis. Basically, your plant will have AI and will be able to talk with you using emojis!
 
 
 
 ![System components overview](/Docs/Photos/Full-device.jpg)
 
 Plant container			          							 |Water bucket	 
-:-----------------------------------------------------------:|:-------------------------------------------------------------------------
+:-----------------------------------------------------------:|:-------------------------------------------------------------------------:|
 ![System components overview](/Docs/Photos/Pot-3D-design.gif)|   ![System components overview](/Docs/Photos/Water-bucket-3D-design.gif)
 
 
 
+## Repository Content Summary
 
+1. **3D Enclosures**
 
-## Overview
+   This section includes the 3D printed parts, namely Fusion360 project files and STLs.
+
+   - [Plant pot](/3D Enclosures/Plant pot/)
+   - [Water bucket](/3D Enclosures/Water bucket/)
+
+2. **Code**
+
+   Includes micro-controllers' code, Artificial Intelligence code and various assets used during development.
+
+   - [AI](/Code/AI)
+
+     [LSTM.py](/Code/AI/LSTM.py) is the main Python script where the LSTM neural network is developed and trained. This folder also contains the old [Colab experiments](/Code/AI/Colab expirements/), which are obsolete and currently kept for archiving purposes. Finally, the [Results](/Code/AI/Results/) folder, which contains experiments' charts for both the LSTM.py and the obsolete Colab experiments.
+
+   - [Assets](/Code/Assets)
+
+     Contains `.bmp` files to be visualised on the screen, in addition to their original Photoshop files `.psd`
+
+   - [ATMega8A](/Code/ATMega8A)
+
+     C program for the AVR micro-controller.
+
+   - [ESP32](/Code/ESP32)
+
+     C++ code for the main micro-controller, which will replace Huzzah.
+
+   - [Huzzah](/Code/Huzzah)
+
+     C++ code for the old micro-controller. It will replaced by ESP32.
+
+3. **Datasets**
+
+   Includes 1 month dataset (the [full dataset](/Datasets/Full)) and other partial datasets used to train the AI model.
+
+   This section also contains some [data analysis](/Datasets/Analysis/Analysis.md).
+
+4. **Docs**
+
+   This folder holds different kinds of documentation and images produced during project life time.
+
+5. **PCB**
+
+   The electronic side of the project. This section contains Eagle files and CAM outputs sent to PCB manufacturers.
+
+6. **Server**
+
+   Docker Composer file for InfluxDB and Grafana. Basically, all data acquisition is being managed by this Docker image.
+
+## Project Overview
 
 This conceptual diagram explains how the system is composed, down from reading sensors and understanding their values, and later sending them up to the cloud for further analysis and visualisation.
 
