@@ -19,8 +19,8 @@ Plant container			          							 |Water bucket
 
    This section includes the 3D printed parts, namely Fusion360 project files and STLs.
 
-   - [Plant pot](/3D Enclosures/Plant pot/)
-   - [Water bucket](/3D Enclosures/Water bucket/)
+   - [Plant pot](</3D Enclosures/Plant pot/>)
+   - [Water bucket](</3D Enclosures/Water bucket/>)
 
 2. **Code**
 
