@@ -228,7 +228,7 @@ void drawMoodOnScreen(int mood){
     //Paint_SetRotate(ROTATE_0);
     Paint_DrawImage(gImage_happy, 5, 4, 160, 160); 
     //Paint_DrawString_EN(5, 5, "Next humidifier schedule:",&Font16,  BLACK, GREEN);
-    Paint_DrawImage(gImage_next_watering, 6, 160, 160, 160); 
+    Paint_DrawImage(gImage_qrcode, 5, 160, 160, 160); 
     //Paint_DrawImage(gImage_watering_now, 6, 160, 160, 160);
     
   } 
