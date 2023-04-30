@@ -40,57 +40,57 @@ def influxDbQuery(valueName):
         results.append((record.get_time(), record.get_value()))
     return results
    
-airHumidityQueryResult = influxDbQuery('airHumidity')
-airTemperatureQueryResult = influxDbQuery('airTemperature')
+#airHumidityQueryResult = influxDbQuery('airHumidity')
+#airTemperatureQueryResult = influxDbQuery('airTemperature')
 soilHumidityQueryResult = influxDbQuery('soilHumidity')
-soilTemperatureQueryResult = influxDbQuery('soilTemperature')
-uvQueryResult = influxDbQuery('uv')
+#soilTemperatureQueryResult = influxDbQuery('soilTemperature')
+#uvQueryResult = influxDbQuery('uv')
 
 #if not all results are equal in length:
-#airHumidityQueryResult = airHumidityQueryResult[:-14]
+#soilTemperatureQueryResult = soilTemperatureQueryResult[:-3]
 
-print(len(airHumidityQueryResult))
-print(len(airTemperatureQueryResult))
+#print(len(airHumidityQueryResult))
+#print(len(airTemperatureQueryResult))
 print(len(soilHumidityQueryResult))
-print(len(soilTemperatureQueryResult))
-print(len(uvQueryResult))
+#print(len(soilTemperatureQueryResult))
+#print(len(uvQueryResult))
 
 ############################ SECTION: Converting the shape of the dataset ############################
 
-airHumidityDataset = np.array(airHumidityQueryResult)[:, 1]
-airTemperatureDataset = np.array(airTemperatureQueryResult)[:, 1]
+#airHumidityDataset = np.array(airHumidityQueryResult)[:, 1]
+#airTemperatureDataset = np.array(airTemperatureQueryResult)[:, 1]
 soilHumidityDataset = np.array(soilHumidityQueryResult)[:, 1]
 soilTemperatureDataset = np.array(soilTemperatureQueryResult)[:, 1]
-uvDataset = np.array(uvQueryResult)[:, 1]
+#uvDataset = np.array(uvQueryResult)[:, 1]
 
-datetimeDataset = np.array(uvQueryResult)[:, 0]
+datetimeDataset = np.array(soilHumidityQueryResult)[:, 0]
 
-df = pd.DataFrame({'datetime':datetimeDataset, 'airHumidity':airHumidityDataset, 'airTemperature':airTemperatureDataset, 'soilHumidity':soilHumidityDataset, 'soilTemperature':soilTemperatureDataset, 'uv':uvDataset})
+df = pd.DataFrame({'datetime':datetimeDataset, 'soilHumidity':soilHumidityDataset})
 
 #df.to_csv('importedDataset.csv')
 
 titles = [
-    "airHumidity",
-    "airTemperature",
+    #"airHumidity",
+    #"airTemperature",
     "soilHumidity",
-    "soilTemperature",
-    "uv"
+    #"soilTemperature",
+    #"uv"
 ]
 
 feature_keys = [
-    "airHumidity",
-    "airTemperature",
+    #"airHumidity",
+    #"airTemperature",
     "soilHumidity",
-    "soilTemperature",
-    "uv"
+    #"soilTemperature",
+    #"uv"
 ]
 
 colors = [
-    "blue",
-    "orange",
+    #"blue",
+    #"orange",
     "green",
-    "red",
-    "purple"
+    #"red",
+    #"purple"
 ]
 
 date_time_key = "datetime"
@@ -119,13 +119,14 @@ def show_raw_visualization(data):
 show_raw_visualization(df)
 
 #remove datetime column 
-df2 = pd.DataFrame({'airHumidity':airHumidityDataset, 'airTemperature':airTemperatureDataset, 'soilHumidity':soilHumidityDataset, 'soilTemperature':soilTemperatureDataset, 'uv':uvDataset})
+df2 = pd.DataFrame({'soilHumidity':soilHumidityDataset})
 
 #NOTE: Be careful before calculating correlation to chech the dtypes of the dataframe, even if you see them as floats in df.describe(),
 #that doesn't mean they are floats!
 df2.dtypes
 df2 = df2.apply(pd.to_numeric)
 df2.dtypes
+############################ TODO: Data cleaning, outliers and spikes detection, and missing values processing ############################
 
 ############################ SECTION: Trying to understand dataset's correlation ############################
 
@@ -160,9 +161,9 @@ def normalize(data, train_split):
 
 print(
     "The selected parameters are:",
-    ", ".join([titles[i] for i in [0, 1, 2, 3, 4]]),
+    ", ".join([titles[i] for i in [0]]),
 )
-selected_features = [feature_keys[i] for i in [0, 1, 2, 3, 4]]
+selected_features = [feature_keys[i] for i in [0]]
 features = df2[selected_features] #using the corrected dtypes
 #features.index = df[date_time_key]
 features.head()
@@ -193,7 +194,7 @@ val_data = pd.DataFrame(val_data)
 start = past + future
 end = start + train_split
 
-x_train = train_data[[i for i in range(5)]].values
+x_train = train_data[[i for i in range(1)]].values
 y_train = features.iloc[start:end][[titles[0]]] #change here the target training
 print('training size:', len(x_train))
 
@@ -215,7 +216,7 @@ x_end = len(val_data) - past - future
 
 label_start = train_split + past + future
 
-x_val = val_data.iloc[:x_end][[i for i in range(5)]].values
+x_val = val_data.iloc[:x_end][[i for i in range(1)]].values
 y_val = features.iloc[label_start:][[titles[0]]] #change here the target training
 
 dataset_val = keras.preprocessing.timeseries_dataset_from_array(
@@ -312,15 +313,18 @@ def show_plot(plot_data, delta, title):
     return 
 
 for x, y in dataset_test.take(5):
+    print(x)
     prediction = model.predict(x)
     prediction = prediction[0]
     print('prediction:', prediction)
     print('truth:', y[0].numpy())
+    tempx = scaler.inverse_transform(x[0])
     show_plot(
-        [x[0][:, 1].numpy(), y[0], prediction],
+        [tempx[:, 0], y[0], prediction],
         12,
         "Single Step Prediction",
     )
+ 
 
 ############################ SECTION: Model conversion to TFLite ############################
 
